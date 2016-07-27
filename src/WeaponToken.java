@@ -1,4 +1,6 @@
-
+/**
+ * Weapon token on the board that can be moved by players.
+ */
 public class WeaponToken implements GameToken{
 	public Weapon name;
 	public WeaponToken(Weapon name){
