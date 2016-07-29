@@ -20,5 +20,4 @@ public class Player {
 	public String getToken() {
 		return token;
 	}
-
 }
