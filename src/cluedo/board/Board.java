@@ -39,15 +39,15 @@ public class Board {
 					Position pos = new Position(height, width, c);
 					
 					if(Character.isDigit(c)){
+						HallwayTile startTile = new HallwayTile(pos, c);
 						for(CharacterToken player : activePlayers){
 							if(player.getUid() == Character.getNumericValue(c)){
-								HallwayTile t = new HallwayTile(pos, c);
-								t.setToken(player);
+								startTile.setToken(player);
 								player.setXPos(width);
 								player.setYPos(height);
-								board[height][width] = t;
 							}
 						}
+						board[height][width] = startTile;
 					} else {
 						board[height][width] = getTile(c, pos);
 					}

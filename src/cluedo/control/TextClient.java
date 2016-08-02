@@ -197,5 +197,4 @@ public class TextClient {
 		// create a new cluedo game
 		CluedoGame game = new CluedoGame(players, boardName);
 	}
-
 }
