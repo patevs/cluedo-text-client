@@ -182,8 +182,16 @@ public class TextClient {
 		}
 
 		// Print banner
-		System.out.println("***** Cluedo Game *****");
-		System.out.println(" Patrick Evans, 2016 ");
+		System.out.println(" \t_______ ___     __   __ _______ ______  _______   _______ _______ ____ ___ ");
+		System.out.println("\t|       |   |   |  | |  |       |      ||       | |       |  _    |    |   |");
+		System.out.println("\t|       |   |   |  | |  |    ___|  _    |   _   | |____   | | |   ||   |   |_ _"); 
+		System.out.println("\t|       |   |   |  |_|  |   |___| | |   |  | |  |  ____|  | | |   ||   |    _  |");
+		System.out.println("\t|      _|   |___|       |    ___| |_|   |  |_|  | | ______| |_|   ||   |   | | |");
+		System.out.println("\t|     |_|       |       |   |___|       |       | | |_____|       ||   |   |_| |");
+		System.out.println("\t|_______|_______|_______|_______|______||_______| |_______|_______||___|_______|");
+		System.out.println("\t          +-+-+-+-+-+-+-+ +-+-+-+-+-+ +-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+");
+		System.out.println("\t          |P|a|t|r|i|c|k| |E|v|a|n|s| |&| |M|a|r|i|a| |L|e|g|a|s|p|i|");
+		System.out.println("\t          +-+-+-+-+-+-+-+ +-+-+-+-+-+ +-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+");
 		System.out.println(" ");
 		
 		// get number of players in game
