@@ -1,3 +1,4 @@
+package cluedo.control;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,6 +8,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Set;
 
+import cluedo.tokens.CharacterToken;
+
 
 /**
  * TextClient is the main class of the Cluedo Game program.
@@ -14,6 +17,8 @@ import java.util.Set;
  * 
  */
 public class TextClient {
+	
+	private static int uid = 0;
 
 	public TextClient() {
 		
@@ -63,17 +68,17 @@ public class TextClient {
 	 * @param nplayers
 	 * @return
 	 */
-	private static ArrayList<Player> inputPlayers(int nplayers) {
+	private static ArrayList<CharacterToken> inputPlayers(int nplayers) {
 		// set up the tokens
 		ArrayList<String> tokens = new ArrayList<String>();	
 		// adding all characters to the tokens list
-		Set<CluedoGame.Characters> characters = (Set) EnumSet.allOf(CluedoGame.Characters.class);
-		for(CluedoGame.Characters c : characters){
+		Set<CluedoGame.Character> characters = (Set<CluedoGame.Character>) EnumSet.allOf(CluedoGame.Character.class);
+		for(CluedoGame.Character c : characters){
 			tokens.add(c.toString().toLowerCase());
 		}
 		
 		// get player input data
-		ArrayList<Player> players = new ArrayList<Player>();	
+		ArrayList<CharacterToken> players = new ArrayList<CharacterToken>();	
 		for (int i = 1; i <= nplayers; i++) {
 			// get player name
 			String name = inputString("Player #" + i + " name? ");
@@ -89,8 +94,17 @@ public class TextClient {
 			}
 			// remove the selected token
 			tokens.remove(token);
-			// create a new player
-			players.add(new Player(name, token));
+			
+			// get the character matching the chosen token
+			CluedoGame.Character player = null;
+			for(CluedoGame.Character c : characters){
+				if(c.toString().toLowerCase().equals(token)){
+					player = c;
+				}
+			}
+			if(player == null) throw new CluedoError("Character cannot be null");
+			// create a new player character
+			players.add(new CharacterToken(name, player, ++uid));
 		}
 		// return the list of players
 		return players;
@@ -178,7 +192,7 @@ public class TextClient {
 		if(nplayers < 3 || nplayers > 6){
 			throw new CluedoError("Invalid number of players: " + nplayers);
 		}
-		ArrayList<Player> players = inputPlayers(nplayers);
+		ArrayList<CharacterToken> players = inputPlayers(nplayers);
 			
 		// create a new cluedo game
 		CluedoGame game = new CluedoGame(players, boardName);

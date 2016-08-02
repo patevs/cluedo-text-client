@@ -1,21 +1,26 @@
+package cluedo.board;
+
+import cluedo.control.CluedoError;
+import cluedo.control.CluedoGame;
+import cluedo.tokens.GameToken;
+
 /**
  * A room tile on the game board, which can hold a maximum of one game token.
  */
-public class RoomTile implements Tile{
-	private Position pos;
-	private CluedoGame.Rooms name;
+public class RoomTile extends Tile{
+	
+	private CluedoGame.Room name;
 	private GameToken item;
 	
 	/**
 	 * Creates a new room tile object to store tokens in.
 	 * @param name
 	 */
-	public RoomTile(Position pos, CluedoGame.Rooms name){
-		this.pos = pos;		
+	public RoomTile(Position pos, CluedoGame.Room name, char symbol){
+		super(pos, symbol);	
 		this.name = name;
 	}
 	
-	@Override
 	public boolean add(Object o) throws CluedoError{
 		if(!(o instanceof GameToken))
 			throw new CluedoError("Can only add game tokens to this tile");
@@ -25,7 +30,6 @@ public class RoomTile implements Tile{
 		return true;
 	}
 	
-	@Override
 	public GameToken remove(){
 		GameToken currentItem = item;
 		item = null;
@@ -44,7 +48,7 @@ public class RoomTile implements Tile{
 	 * Returns the name of this room.
 	 * @return
 	 */
-	public CluedoGame.Rooms name(){
+	public CluedoGame.Room name(){
 		return name;
 	}
 }

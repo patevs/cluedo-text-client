@@ -1,8 +1,14 @@
+package cluedo.tokens;
+
+import cluedo.control.CluedoGame.Weapon;
+
 /**
  * Weapon token on the board that can be moved by players.
  */
 public class WeaponToken implements GameToken{
-	public Weapon name;
+	
+	private Weapon name;
+	
 	public WeaponToken(Weapon name){
 		this.name=name;
 	}

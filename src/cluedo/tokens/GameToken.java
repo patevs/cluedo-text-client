@@ -1,3 +1,4 @@
+package cluedo.tokens;
 /**
  * Tokens displayed on the board.
  */

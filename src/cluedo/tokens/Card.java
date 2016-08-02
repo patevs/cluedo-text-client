@@ -1,3 +1,4 @@
+package cluedo.tokens;
 
 public interface Card {
 
