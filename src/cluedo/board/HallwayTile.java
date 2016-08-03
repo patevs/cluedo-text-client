@@ -18,4 +18,13 @@ public class HallwayTile extends Tile{
 		this.token = player;
 	}
 
+	@Override
+	public char getSymbol(){
+		if(token != null){
+			return Character.forDigit(token.getUid(), 10);
+		} else {
+			return ' ';
+		}
+	}
+
 }

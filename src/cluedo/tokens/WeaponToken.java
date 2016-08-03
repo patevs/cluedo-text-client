@@ -5,7 +5,7 @@ import cluedo.control.CluedoGame.Weapon;
 /**
  * Weapon token on the board that can be moved by players.
  */
-public class WeaponToken implements GameToken{
+public class WeaponToken extends GameToken{
 	
 	private Weapon name;
 	
