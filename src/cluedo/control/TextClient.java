@@ -268,18 +268,22 @@ public class TextClient {
 			case "Move North.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveNorth(player);
+				board.toString();
 				break;
 			case "Move East.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveEast(player);
+				board.toString();
 				break;
 			case "Move South.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveSouth(player);
+				board.toString();
 				break;
 			case "Move West.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveWest(player);
+				board.toString();
 				break;
 			case "Exit room.":
 			case "Make suggestion.":

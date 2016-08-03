@@ -1,4 +1,5 @@
 package cluedo.board;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -254,9 +255,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveNorth(CharacterToken player) {
-		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
-		player.setYPos(player.getYPos()-1); // move player
-		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
+		Point newPos = new Point(player.getXPos(), player.getYPos()-1);
+		move(newPos, player);
 	}	
 	
 	/**
@@ -264,9 +264,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveEast(CharacterToken player){
-		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
-		player.setXPos(player.getXPos()+1); // move player
-		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
+		Point newPos = new Point(player.getXPos()+1, player.getYPos());
+		move(newPos, player);
 	}
 	
 	/**
@@ -274,9 +273,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveSouth(CharacterToken player) {
-		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
-		player.setYPos(player.getYPos()+1); // move player
-		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
+		Point newPos = new Point(player.getXPos(), player.getYPos()+1);
+		move(newPos, player);
 	}
 	
 	/**
@@ -284,9 +282,21 @@ public class Board {
 	 * @param player
 	 */
 	public void moveWest(CharacterToken player) {
+		Point newPos = new Point(player.getXPos()-1, player.getYPos());
+		move(newPos, player);
+	}
+	
+	/**
+	 * Sets player's position within the token and the board.
+	 * @param newPos
+	 * @param player
+	 */
+	private void move(Point newPos, CharacterToken player){
 		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
-		player.setXPos(player.getXPos()-1); // move player
-		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
+		// change player position
+		player.setXPos(newPos.x);
+		player.setYPos(newPos.y);
+		board[newPos.y][newPos.x].setToken(player);	// set player in new position on board
 	}
 	
 	/**
