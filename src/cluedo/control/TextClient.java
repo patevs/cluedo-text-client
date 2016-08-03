@@ -24,6 +24,10 @@ public class TextClient {
 		
 	}
 	
+	private void turnOptions(){
+		
+	}
+	
 	/**
 	 * Get an integer from System.in
 	 */
