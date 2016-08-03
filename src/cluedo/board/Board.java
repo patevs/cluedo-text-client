@@ -112,6 +112,12 @@ public class Board {
 			return false;
 		}
 		
+		// cannot move if tile above is occupied
+		Tile destination = board[token.getYPos()-1][token.getXPos()];
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+		
 		// can only exit if in room
 		if(inRoom(token)){
 			return false;
@@ -140,6 +146,12 @@ public class Board {
 			return false;
 		}
 		
+		// cannot move if next tile is occupied
+		Tile destination = board[token.getYPos()][token.getXPos()+1];
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+				
 		// can only exit if in room
 		if(inRoom(token)){
 			return false;
@@ -168,6 +180,12 @@ public class Board {
 			return false;
 		}
 		
+		// cannot move if below tile is occupied
+		Tile destination = board[token.getYPos()+1][token.getXPos()];
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+				
 		// can only exit if in room
 		if(inRoom(token)){
 			return false;
@@ -196,6 +214,12 @@ public class Board {
 			return false;
 		}
 		
+		// cannot move if next tile is occupied
+		Tile destination = board[token.getYPos()][token.getXPos()-1];
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+				
 		// can only exit if in room
 		if(inRoom(token)){
 			return false;
