@@ -213,23 +213,44 @@ public class Board {
 		return true;
 	}
 	
+	/**
+	 * Moves player one position up
+	 * @param player
+	 */
 	public void moveNorth(CharacterToken player) {
-		board[player.getYPos()][player.getXPos()].;	// set original pos to null
+		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
 		player.setYPos(player.getYPos()-1); // move player
-		// set player's new pos in board
+		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
 	}	
 	
+	/**
+	 * Moves player one position to the right
+	 * @param player
+	 */
 	public void moveEast(CharacterToken player){
-		player.setXPos(player.getXPos()+1);
+		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
+		player.setYPos(player.getXPos()+1); // move player
+		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
 	}
 	
+	/**
+	 * Moves player one position down
+	 * @param player
+	 */
 	public void moveSouth(CharacterToken player) {
-		player.setYPos(player.getYPos()+1);
-		
+		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
+		player.setYPos(player.getYPos()+1); // move player
+		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
 	}
 	
+	/**
+	 * Moves player one position left
+	 * @param player
+	 */
 	public void moveWest(CharacterToken player) {
-		player.setXPos(player.getXPos()-1);
+		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
+		player.setYPos(player.getXPos()-1); // move player
+		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
 	}
 	
 	/**

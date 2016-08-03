@@ -17,10 +17,8 @@ public abstract class Tile {
 		this.symbol = symbol;
 	}
 
-	public boolean setToken(Object o) throws CluedoError{
-		if(!(o instanceof GameToken))
-			throw new CluedoError("Can only add game tokens to this tile");
-		if(token!=null)
+	public boolean setToken(GameToken o){
+		if(token!=null && o!=null)
 			throw new CluedoError("Tile already contains an item");
 		this.token = (GameToken) o;
 		return true;

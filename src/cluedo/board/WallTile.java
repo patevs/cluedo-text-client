@@ -12,9 +12,8 @@ public class WallTile extends Tile{
 	public GameToken getToken() {
 		throw new CluedoError("Wall tiles do not store game tokens");
 	}
-
 	
-	public void setToken(GameToken token) {
+	public boolean setToken(GameToken token) {
 		throw new CluedoError("Wall tiles do not store game tokens");
 	}
 }
