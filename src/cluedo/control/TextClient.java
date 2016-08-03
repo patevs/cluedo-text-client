@@ -265,10 +265,26 @@ public class TextClient {
 			case "Look at hand.":
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
-			case "Move south.":
+			case "Move North.":
+				player.setRemainingSteps(player.getRemainingSteps() - 1);
+				board.moveNorth(player);
+				break;
+			case "Move East.":
+				player.setRemainingSteps(player.getRemainingSteps() - 1);
+				board.moveEast(player);
+				break;
+			case "Move South.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveSouth(player);
 				break;
+			case "Move West.":
+				player.setRemainingSteps(player.getRemainingSteps() - 1);
+				board.moveWest(player);
+				break;
+			case "Exit room.":
+			case "Make suggestion.":
+			case "Make accusation.":
+			case "View help":
 			case "End turn.":
 				player.setRemainingSteps(0);
 				break;
@@ -304,11 +320,6 @@ public class TextClient {
 	private static List<String> playerOptions(CharacterToken player, Board board){
 		List<String> options = new ArrayList<String>();
 		options.add("Look at hand.");
-		if(board.inRoom(player)){
-			if(player.getRemainingSteps() > 0){
-				options.add("Exit room.");
-			}
-		}
 		if(player.getRemainingSteps() > 0){
 			if(board.canMoveNorth(player)){
 				options.add("Move North.");
@@ -323,6 +334,10 @@ public class TextClient {
 				options.add("Move West.");
 			}
 		}
+		if(board.inRoom(player)){
+			options.add("Make suggestion.");
+		}
+		options.add("Make accusation.");
 		options.add("View help");
 		options.add("End turn.");
 		return options;
