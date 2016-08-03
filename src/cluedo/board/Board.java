@@ -100,7 +100,7 @@ public class Board {
 		Tile t = board[Ypos][Xpos];
 		return Character.isUpperCase(t.getSymbol());
 	}
-	
+	//TODO: check if tile occupied
 	/**
 	 * Returns true if a given player can move north on the board
 	 * @param token
@@ -214,12 +214,22 @@ public class Board {
 	}
 	
 	public void moveNorth(CharacterToken player) {
-		int xpos = player.getXPos();
-		int ypos = player.getYPos();
-		
+		board[player.getYPos()][player.getXPos()].;	// set original pos to null
+		player.setYPos(player.getYPos()-1); // move player
+		// set player's new pos in board
 	}	
+	
+	public void moveEast(CharacterToken player){
+		player.setXPos(player.getXPos()+1);
+	}
+	
 	public void moveSouth(CharacterToken player) {
+		player.setYPos(player.getYPos()+1);
 		
+	}
+	
+	public void moveWest(CharacterToken player) {
+		player.setXPos(player.getXPos()-1);
 	}
 	
 	/**
