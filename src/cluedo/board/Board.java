@@ -100,7 +100,7 @@ public class Board {
 		Tile t = board[Ypos][Xpos];
 		return Character.isUpperCase(t.getSymbol());
 	}
-	//TODO: check if tile occupied
+
 	/**
 	 * Returns true if a given player can move north on the board
 	 * @param token
@@ -112,8 +112,11 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if tile above is occupied
+		// cannot move if tile above is occupied or is a wall tile
 		Tile destination = board[token.getYPos()-1][token.getXPos()];
+		if(destination instanceof WallTile){
+			return false;
+		}
 		if(destination.getToken()!=null){ 
 			return false;
 		}
@@ -146,8 +149,11 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if next tile is occupied
+		// cannot move if next tile is occupied or is a wall tile
 		Tile destination = board[token.getYPos()][token.getXPos()+1];
+		if(destination instanceof WallTile){
+			return false;
+		}
 		if(destination.getToken()!=null){ 
 			return false;
 		}
@@ -180,8 +186,11 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if below tile is occupied
+		// cannot move if below tile is occupied or is a wall tile
 		Tile destination = board[token.getYPos()+1][token.getXPos()];
+		if(destination instanceof WallTile){
+			return false;
+		}
 		if(destination.getToken()!=null){ 
 			return false;
 		}
@@ -214,8 +223,11 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if next tile is occupied
+		// cannot move if next tile is occupied or is a wall tile
 		Tile destination = board[token.getYPos()][token.getXPos()-1];
+		if(destination instanceof WallTile){
+			return false;
+		}
 		if(destination.getToken()!=null){ 
 			return false;
 		}
@@ -253,7 +265,7 @@ public class Board {
 	 */
 	public void moveEast(CharacterToken player){
 		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
-		player.setYPos(player.getXPos()+1); // move player
+		player.setXPos(player.getXPos()+1); // move player
 		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
 	}
 	
@@ -273,7 +285,7 @@ public class Board {
 	 */
 	public void moveWest(CharacterToken player) {
 		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
-		player.setYPos(player.getXPos()-1); // move player
+		player.setXPos(player.getXPos()-1); // move player
 		board[player.getYPos()][player.getXPos()].setToken(player);	// set player's new pos in board
 	}
 	
