@@ -1,20 +1,25 @@
 package cluedo.tokens;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cluedo.control.CluedoGame;
 import cluedo.control.CluedoGame.Character;
 
 /**
  * Character tokens on the board that can be moved by players.
+ * Represents a player in the game
  */
-public class CharacterToken implements GameToken{
+public class CharacterToken extends GameToken{
 	
 	private String name;
 	private CluedoGame.Character token; // character in game
 	private int uid; // unique id of player
 	
-	// position of player on the board
-	private int XPos;
-	private int YPos;
+	private List<Card> hand = new ArrayList<Card>(); // represents the players hand of cards  
+	
+	// number of remaining steps for a turn
+	private int stepsRemaining;
 	 
 	public CharacterToken(String name, Character token, int uid) {
 		this.name = name;
@@ -31,24 +36,21 @@ public class CharacterToken implements GameToken{
 	public int getUid() {
 		return uid;
 	}
+	public List<Card> getHand() {
+		return hand;
+	}
+	public void addCard(Card c){
+		hand.add(c);
+	}
 	
+	public void setRemainingSteps(int steps) {
+		this.stepsRemaining = steps;
+	}
+	public int getRemainingSteps(){
+		return this.stepsRemaining;
+	}
+
 	public String toString(){
 		return name.toString();
 	}
-
-
-	public int getXPos() {
-		return XPos;
-	}
-	public void setXPos(int xPos) {
-		XPos = xPos;
-	}
-	public int getYPos() {
-		return YPos;
-	}
-	public void setYPos(int yPos) {
-		YPos = yPos;
-	}
-
-
 }

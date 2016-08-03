@@ -10,7 +10,7 @@ import cluedo.tokens.GameToken;
 public class RoomTile extends Tile{
 	
 	private CluedoGame.Room name;
-	private GameToken item;
+	private GameToken token;
 	
 	/**
 	 * Creates a new room tile object to store tokens in.
@@ -24,15 +24,15 @@ public class RoomTile extends Tile{
 	public boolean add(Object o) throws CluedoError{
 		if(!(o instanceof GameToken))
 			throw new CluedoError("Can only add game tokens to this tile");
-		if(item!=null)
+		if(token!=null)
 			throw new CluedoError("Tile already contains an item");
-		this.item = (GameToken) o;
+		this.token = (GameToken) o;
 		return true;
 	}
 	
 	public GameToken remove(){
-		GameToken currentItem = item;
-		item = null;
+		GameToken currentItem = token;
+		token = null;
 		return currentItem;
 	}
 	
@@ -40,8 +40,12 @@ public class RoomTile extends Tile{
 	 * Returns the item stored in this tile
 	 * @return
 	 */
-	public GameToken getItem(){
-		return item;
+	public GameToken getToken(){
+		if(token != null){
+			return token;
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -51,4 +55,10 @@ public class RoomTile extends Tile{
 	public CluedoGame.Room name(){
 		return name;
 	}
+	
+	@Override
+	public char getSymbol(){
+		return symbol;
+	}
+	
 }

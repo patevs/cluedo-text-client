@@ -6,7 +6,7 @@ package cluedo.board;
 public abstract class Tile {
 	
 	private Position pos;
-	private char symbol;
+	protected char symbol;
 	
 	public Tile(Position pos, char symbol) {
 		this.pos = pos;

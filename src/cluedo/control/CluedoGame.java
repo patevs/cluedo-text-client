@@ -1,7 +1,9 @@
 package cluedo.control;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import cluedo.board.Board;
 import cluedo.tokens.Card;
@@ -13,26 +15,32 @@ public class CluedoGame {
 	
 	private int numberOfPlayers; // number of players in game
 	private List<CharacterToken> activePlayers; // players still active in game
-	private List<WeaponToken> weapons; // all weapons in game
-	private List<Room> rooms; // all rooms in the game
-	private Card[] solution; // random game solution
-	private Board gameBoard; // the game board
+	private static List<WeaponToken> weapons; // all weapons in game
+	private static List<Room> rooms; // all rooms in the game
+	
+	private static List<Card> deck; // represents the deck of all cards
+	private static List<Card> unusedCards; // unused cards left after deal
+	private static Card[] solution; // random game solution
+	
+	private static Board gameBoard; // the game board
 
 
 	public CluedoGame(List<CharacterToken> players, String boardFile) {
 		this.numberOfPlayers = players.size();
 		this.activePlayers = players;
-		this.weapons = getWeapons();
-		this.rooms = getRooms();
-		this.solution = getSolution();
-		this.gameBoard = new Board(this, boardFile);
+		CluedoGame.weapons = getWeapons();
+		CluedoGame.rooms = getRooms();
+		CluedoGame.solution = getSolution();
+		CluedoGame.gameBoard = new Board(this, boardFile);
+		CluedoGame.deck = getDeck();
+		dealCards();
 	}
 
 	/**
 	 * Get the number of players in the game
 	 * @return num of players
 	 */
-	public int getNumPlayers(){
+	public int numPlayers(){
 		return numberOfPlayers;
 	}
 	
@@ -40,8 +48,23 @@ public class CluedoGame {
 	 * Get the current active players in the game
 	 * @return
 	 */
-	public List<CharacterToken> getPlayers(){
+	public List<CharacterToken> players(){
 		return activePlayers;
+	}
+	public static List<WeaponToken> weapons(){
+		return weapons;
+	}
+	public static List<Room> rooms(){
+		return rooms;
+	}
+	public static List<Card> deck(){
+		return deck;
+	}
+	public static Board board(){
+		return gameBoard;
+	}
+	public List<Card> unusedCards(){
+		return unusedCards;
 	}
 	
 	/**
@@ -58,6 +81,10 @@ public class CluedoGame {
 		return solution;
 	}
 	
+	/**
+	 * returns the game solution
+	 * @return game solution
+	 */
 	public Card[] Solution(){
 		return solution;
 	}
@@ -78,6 +105,10 @@ public class CluedoGame {
 		return weapons;
 	}
 	
+	/**
+	 * Returns a list of all the rooms in the game
+	 * @return a list of all rooms
+	 */
 	private static List<Room> getRooms() {
 		List<Room> rooms = new ArrayList<Room>();
 		// iterate over each room and add each one to the list
@@ -88,6 +119,50 @@ public class CluedoGame {
 		return rooms;
 	}
 	
+	/**
+	 * Returns a list of all the cards in the game deck
+	 * @return list of all cards
+	 */
+	private List<Card> getDeck() {
+		List<Card> deck = new ArrayList<Card>();
+		deck.addAll(Arrays.asList(Character.values()));
+		deck.addAll(Arrays.asList(Weapon.values()));
+		deck.addAll(Arrays.asList(Room.values()));
+		deck.removeAll(Arrays.asList(Solution()));
+		return deck;
+	}
+	
+	/**
+	 * Deals the cards evenly to all player leaving out left over cards
+	 */
+	private void dealCards() {
+		// remove unused cards from deck so remaining cards can be delt evenly
+		int numUnused = deck.size() % numPlayers();
+		unusedCards = new ArrayList<Card>();
+		for(int i=0; i<numUnused; i++){
+			unusedCards.add(getCardFromDeck());
+		}
+		// deal cards evenly to players
+		int numCardsToDeal = deck.size() / numPlayers();
+		for(CharacterToken player: players()){
+			for(int i=0; i<numCardsToDeal; i++){
+				player.addCard(getCardFromDeck());
+			}
+		}
+	}
+	
+	/**
+	 * Gets a random card from the remaining deck of cards
+	 * @return random card from deck
+	 */
+	private Card getCardFromDeck() {
+		Card result = deck.get(new Random().nextInt(deck.size()));
+		deck.remove(result);
+		return result;
+	}
+
+
+
 	/**
 	 * Represents the six characters in the game
 	 */
