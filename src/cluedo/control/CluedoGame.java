@@ -57,24 +57,49 @@ public class CluedoGame {
 	public List<CharacterToken> players(){
 		return activePlayers;
 	}
+	
+	/**
+	 * Returns the list of all weapons.
+	 * @return
+	 */
 	public static List<WeaponToken> weapons(){
 		return weapons;
 	}
+	
+	/**
+	 * Returns the list of all rooms.
+	 * @return
+	 */
 	public static List<Room> rooms(){
 		return rooms;
 	}
+	
+	/**
+	 * Returns the list of all cards in the deck.
+	 * @return
+	 */
 	public static List<Card> deck(){
 		return deck;
 	}
+	
+	/**
+	 * Retur the board.
+	 * @return
+	 */
 	public static Board board(){
 		return gameBoard;
 	}
+	
+	/**
+	 * Returns the list of extra cards.
+	 * @return
+	 */
 	public List<Card> unusedCards(){
 		return unusedCards;
 	}
 	
 	/**
-	 * This method gets a random solution to the cluedo game.
+	 * This method gets a random solution to the Cluedo game.
 	 *  The solution contains one Character card, one Room card, 
 	 *  and one weapon card.
 	 * @return solution
@@ -88,7 +113,7 @@ public class CluedoGame {
 	}
 	
 	/**
-	 * returns the game solution
+	 * Returns the game solution
 	 * @return game solution
 	 */
 	public Card[] Solution(){
