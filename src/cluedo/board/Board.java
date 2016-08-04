@@ -12,6 +12,7 @@ import cluedo.control.CluedoGame.Room;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.GameToken;
+import cluedo.tokens.WeaponToken;
 
 /**
  * Holds the tokens and logic for moving the tokens around the board.
@@ -105,7 +106,7 @@ public class Board {
 			return false;
 		}
 		
-		// can only exit if in room
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -118,7 +119,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'e' || symbol == 's' || symbol == 'w'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -142,7 +143,7 @@ public class Board {
 			return false;
 		}
 				
-		// can only exit if in room
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -155,7 +156,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 's' || symbol == 'w'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -179,7 +180,7 @@ public class Board {
 			return false;
 		}
 				
-		// can only exit if in room
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -192,7 +193,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 'e' || symbol == 'w'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -216,7 +217,7 @@ public class Board {
 			return false;
 		}
 				
-		// can only exit if in room
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -229,7 +230,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 'e' || symbol == 's'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -274,12 +275,25 @@ public class Board {
 	 * @param newPos
 	 * @param player
 	 */
-	private void move(Point newPos, CharacterToken player){
+	private void move(Point newPos, GameToken player){
 		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
 		// change player position
 		player.setXPos(newPos.x);
 		player.setYPos(newPos.y);
 		board[newPos.y][newPos.x].setToken(player);	// set player in new position on board
+	}
+	
+	/**
+	 * Moves player to a given position on the board.
+	 * @param newPos
+	 * @param player
+	 */
+	public void move(Position newPos, GameToken player){
+		move(new Point(newPos.getX(), newPos.getY()), player);
+	}
+	
+	public Tile getTile(int x, int y){
+		return board[y][x];
 	}
 	
 	/**

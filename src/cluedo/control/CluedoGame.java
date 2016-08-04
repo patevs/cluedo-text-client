@@ -2,8 +2,10 @@ package cluedo.control;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import cluedo.board.Board;
 import cluedo.tokens.Card;
@@ -119,6 +121,20 @@ public class CluedoGame {
 	public Card[] Solution(){
 		return solution;
 	}
+	
+	/**
+	 * Returns the character token with the given name.
+	 * @param name
+	 * @return
+	 */
+	public CharacterToken getCharacter(String name){
+		CharacterToken charToken = null;
+		for(CharacterToken character: activePlayers){
+			if(character.getName().equalsIgnoreCase(name))
+				charToken = character;
+		}
+		return charToken;
+	}
 
 	/** 
 	 * This method returns a list of all the weapons in
@@ -134,6 +150,20 @@ public class CluedoGame {
 		}
 		// return the list of all weapons
 		return weapons;
+	}
+	
+	/**
+	 * Returns the weapon token with a given name.
+	 * @param name
+	 * @return
+	 */
+	public WeaponToken getWeapon(String name){
+		WeaponToken weaponToken = null;
+		for(WeaponToken weapon: weapons){
+			if(weapon.getName().equalsIgnoreCase(name))
+				weaponToken = weapon;
+		}
+		return weaponToken;
 	}
 	
 	/**

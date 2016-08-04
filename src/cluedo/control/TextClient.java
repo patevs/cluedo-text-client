@@ -11,8 +11,12 @@ import java.util.Random;
 import java.util.Set;
 
 import cluedo.board.Board;
+import cluedo.board.RoomTile;
+import cluedo.board.Tile;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
+import cluedo.tokens.GameToken;
+import cluedo.tokens.WeaponToken;
 
 
 /**
@@ -24,7 +28,8 @@ import cluedo.tokens.CharacterToken;
 public class TextClient {
 	
 	private static int uid = 0;
-
+	private static CluedoGame game;
+	
 	public TextClient() {
 		
 	}
@@ -113,7 +118,15 @@ public class TextClient {
 			}
 			if(player == null) throw new CluedoError("Character cannot be null");
 			// create a new player character
-			players.add(new CharacterToken(name, player, ++uid));
+			players.add(new CharacterToken(name, player, true, ++uid));
+		}
+		// spare characterTokens
+		for(String playerName: tokens){
+			for(CluedoGame.Character c : characters){
+				if(c.toString().toLowerCase().equals(playerName)){
+					players.add(new CharacterToken("", c, false, ++uid));
+				}
+			}
 		}
 		// return the list of players
 		return players;
@@ -167,6 +180,120 @@ public class TextClient {
 	               s.substring(1).toLowerCase();
 	}
 	
+	//TODO: make helper methods usable with accuse
+	/**
+	 * Gets suspected murder elements from player.
+	 */
+	private static void makeSuggestion(CharacterToken player, Board board){
+		// Crime scene
+		RoomTile crimeScene = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
+		System.out.println("Suggested crime scene is: " + crimeScene.name());
+				
+		// Gets the suspect
+		CharacterToken suspectToken = getSuspect();
+		
+		//TODO: weapons not assigned on board
+		// Gets the suspected murder weapon
+		WeaponToken weaponToken = getWeapon();
+		
+		// move character and weapon to room
+		moveCrimeTokens(player, suspectToken, crimeScene, board);
+		moveCrimeTokens(player, weaponToken, crimeScene, board);
+		
+		//TODO: go through players
+		for(CharacterToken witness: game.players()){
+			System.out.println("Calling witness: " + witness.getName());
+			
+		}
+	}
+	
+	/**
+	 * Asks player for the suspected murder weapon.
+	 * @return
+	 */
+	private static WeaponToken getWeapon(){
+		String message = "Which weapon do you suggest is the murder weapon?";
+		// set up the tokens
+		ArrayList<String> weapons = new ArrayList<String>();	
+		// adding all characters to the tokens list
+		Set<CluedoGame.Weapon> weaponTokens = (Set<CluedoGame.Weapon>) EnumSet.allOf(CluedoGame.Weapon.class);
+		for(CluedoGame.Weapon w : weaponTokens){
+			weapons.add(w.toString().toLowerCase());
+		}
+		// list remaining tokens
+		listTokens(weapons, "Possible murder weapons: ");
+		String weapon = inputString(message);
+		
+		// retry if the player enters an invalid token
+		while (!weapons.contains(weapon)) {
+			listTokens(weapons, "Invalid token! Must be one of: ");
+			weapon = inputString(message).toLowerCase();
+		}
+		return game.getWeapon(weapon);
+	}
+	
+	/**
+	 * Asks player for the suspect.
+	 * @return
+	 */
+	private static CharacterToken getSuspect(){
+		String message = "Which character do you suggest is the murderer?";
+		String suspect = inputString(message);
+		// set up the tokens
+		ArrayList<String> suspects = new ArrayList<String>();	
+		// adding all characters to the tokens list
+		Set<CluedoGame.Character> characters = (Set<CluedoGame.Character>) EnumSet.allOf(CluedoGame.Character.class);
+		for(CluedoGame.Character c : characters){
+			suspects.add(c.toString().toLowerCase());
+		}
+		// list remaining tokens
+		listTokens(suspects, "Possible suspects: ");
+		// retry if the player enters an invalid token
+		while (!suspects.contains(suspect)) {
+			listTokens(suspects, "Invalid token! Must be one of: ");
+			suspect = inputString(message).toLowerCase();
+		}
+		return game.getCharacter(suspect);
+	}
+	
+	/**
+	 * Moves a token to the same room as a given player.
+	 * @param player
+	 * @param token
+	 * @param crimeScene
+	 * @param board
+	 */
+	private static void moveCrimeTokens(CharacterToken player, GameToken token, RoomTile crimeScene, Board board){
+		Tile current = board.getTile(token.getXPos(), token.getYPos());
+		if(current != crimeScene){
+			Tile destination = nextTile(board, player.getXPos(), player.getYPos());
+			if(destination==null){
+				throw new CluedoError("Could not find space in the room for token");
+			}
+			board.move(destination.getPos(), token);
+		}
+	}
+	
+	/**
+	 * Finds a tile near the given coordinates.
+	 * @param board
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private static Tile nextTile(Board board, int x, int y){
+		Tile destination = board.getTile(x, y);
+		for(int i = -2; i < 3; i++){
+			for(int j = -2; j < 3; j++){
+				if(x+i >= 0 && x+i < 25 && y+j>=0 && y+j < 25){
+					Tile tile = board.getTile(x, y);
+					if(tile.getToken()==null && tile.getClass() == destination.getClass())
+						return tile;
+				}
+			}
+		}
+		return null;
+	}
 	/**
 	 * Executes a given choice made by a player on their turn
 	 * @param choice
@@ -200,6 +327,7 @@ public class TextClient {
 				break;
 			case "Exit room.":
 			case "Make suggestion.":
+				makeSuggestion(player, board);
 			case "Make accusation.":
 			case "View help":
 			case "End turn.":
@@ -229,7 +357,7 @@ public class TextClient {
 	}
 	
 	/**
-	 * Returns a list of options avaiable to a player o their turn
+	 * Returns a list of options available to a player o their turn
 	 * @param player
 	 * @param board
 	 * @return list of options
@@ -309,9 +437,11 @@ public class TextClient {
 		for(CharacterToken c: players){
 			System.out.println("player " + c.getUid() + ": " + c.getToken() + " played by " + c.getName());
 		}
+		
+		// TODO:add extra tokens to board
 			
 		// create a new cluedo game
-		CluedoGame game = new CluedoGame(players, boardName);
+		game = new CluedoGame(players, boardName);
 		Board board = game.board();
 		
 		System.out.println("\nCards have been dealt, the game begins!");
@@ -335,6 +465,8 @@ public class TextClient {
 		// loop until game ends
 		while(boo){
 			for(CharacterToken player: game.players()){
+				if(!player.isPlayer()) // only give turns to players
+					continue;
 				// roll the dice
 				int roll = die.nextInt(6) + 1;
 				player.setRemainingSteps(roll);
@@ -344,7 +476,7 @@ public class TextClient {
 					executeChoice(getPlayerChoice(player, board), player, board);
 				}
 			}
-			boo = false;
+			//boo = false;
 		}
 	}
 }

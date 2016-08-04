@@ -17,6 +17,7 @@ public class CharacterToken extends GameToken{
 	
 	private String name;
 	private CluedoGame.Character token; // character in game
+	private boolean isPlayer;
 	private int uid; // unique id of player
 	
 	private List<Card> hand = new ArrayList<Card>(); // represents the players hand of cards  
@@ -30,9 +31,10 @@ public class CharacterToken extends GameToken{
 	 * @param token
 	 * @param uid
 	 */
-	public CharacterToken(String name, Character token, int uid) {
+	public CharacterToken(String name, Character token, boolean isPlayer, int uid) {
 		this.name = name;
 		this.token = token;
+		this.isPlayer = isPlayer;
 		this.uid = uid;
 	}
 
@@ -49,6 +51,14 @@ public class CharacterToken extends GameToken{
 	 */
 	public CluedoGame.Character getToken() {
 		return token;
+	}
+	
+	/**
+	 * Returns true if this character token represents an active player.
+	 * @return
+	 */
+	public boolean isPlayer(){
+		return isPlayer;
 	}
 	
 	/**
