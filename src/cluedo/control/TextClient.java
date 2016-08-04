@@ -200,6 +200,7 @@ public class TextClient {
 
 		System.out.println("You accuse " + result[0].toString() + " of committing the crime in the " + result[1].toString() +
 				" with the " + result[2].toString());
+		System.out.println("\n");
 		
 		return result;
 	}
@@ -212,21 +213,26 @@ public class TextClient {
 	 */
 	private static boolean checkAccusation(Card[] results, Board board){
 		Card[] solution = game.Solution();
-		if(results==solution){
-			System.out.println("+-+-+-+ +-+-+-+");
-			System.out.println("|Y|o|u| |W|i|n|");
-			System.out.println("+-+-+-+ +-+-+-+");
-			System.out.println("\n");
-			System.out.println("The crime was committed by " + solution[0].toString() + 
-					" in the " + solution[1].toString() + " with the " + solution[2].toString());
-			return true;
+
+		// checks each card by name
+		for(int i = 0; i < 3; i++){
+			if(!((results[i].toString()).equals(solution[i].toString()))){
+				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
+				System.out.println("|Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e|");
+				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
+				System.out.println("The crime was committed by " + solution[0].toString() + 
+						" in the " + solution[1].toString() + " with the " + solution[2].toString());
+				return false;
+			}
 		}
-		System.out.println("+-+-+-+ +-+-+-+-+");
-		System.out.println("|Y|o|u| |L|o|s|e|");
-		System.out.println("+-+-+-+ +-+-+-+-+");
-		System.out.println("The crime was not committed by " + solution[0].toString() + 
+		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
+		System.out.println("|Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n|");
+		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
+		System.out.println("\n");
+		System.out.println("The crime was committed by " + solution[0].toString() + 
 				" in the " + solution[1].toString() + " with the " + solution[2].toString());
-		return false;
+		System.out.println("\n");
+		return true;
 	}
 	
 	/**
@@ -242,13 +248,13 @@ public class TextClient {
 		// Gets the suspect
 		result[0] = (Card)getSuspect();
 		
-		// TODO get room card and move suspects to room
 		String roomName = crimeScene.name().toString();
 		for(Room r : CluedoGame.rooms()){
 			if(r.name().equals(roomName)){
 				result[1] = (Card)r;
 			}
 		}
+		//TODO: move murder elements into room
 		//board.moveIntoRoom(player, (Room)result[2]);
 		//board.moveIntoRoom((GameToken) result[1], (Room)result[2]);
 		
@@ -536,7 +542,7 @@ public class TextClient {
 		String boardName = args[0];
 		File file = new File("./" + boardName);
 
-		// check the file exsitance
+		// check the file exists
 		if (!file.exists()) {
 			System.out.println(boardName + " does not exist in current directory.");
 			System.exit(2);
