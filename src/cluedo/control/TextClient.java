@@ -127,7 +127,7 @@ public class TextClient {
 		for(String playerName: tokens){
 			for(CluedoGame.Character c : characters){
 				if(c.toString().toLowerCase().equals(playerName)){
-					players.add(new CharacterToken("", c, false, ++uid));
+					players.add(new CharacterToken("computer", c, false, ++uid));
 				}
 			}
 		}
@@ -182,8 +182,7 @@ public class TextClient {
 		return s.substring(0, 1).toUpperCase() +
 	               s.substring(1).toLowerCase();
 	}
-	
-	//TODO: make helper methods usable with accuse
+
 	/**
 	 * Gets suspected murder elements from player.
 	 */
@@ -209,27 +208,22 @@ public class TextClient {
 		//board.moveIntoRoom((GameToken) result[1], (Room)result[2]);
 		
 		return result;
-		
-		// move character and weapon to room
-		//(player, suspectToken, crimeScene, board);
-		//moveCrimeTokens(player, weaponToken, crimeScene, board);
-		
-		/*
-		//TODO: go through players
-		for(CharacterToken witness: game.players()){
-			System.out.println("Calling witness: " + witness.getName());
-			System.out.println(player.getName() + " suggests that " + suspectToken.getName() +
-					" used the " + weaponToken.getName() + " to commit the murder in the " +
-					crimeScene.name());
-			List<Card>hand = witness.getHand();
-			///TODO: add room cards
-			if(hand.contains(suspectToken)||hand.contains(weaponToken)){
-				//TODO: get witness to pick a card to show
-				break;
+	}
+	
+	private static boolean checkSuggestion(Card[] suggestion, Board board){
+		for (CharacterToken p : board.players()) {
+			for(Card c : p.getHand()){
+				for(int i=0; i<suggestion.length; i++){
+					if(c.equals(suggestion[i])){
+						System.out.println(p.getName() + " has the card "
+								+ c.toString());
+						return true;
+					}
+				}
 			}
 		}
-		return null;
-		*/
+		System.out.println("Your suggestion cannot be refutted");
+		return false;
 	}
 	
 	/**
@@ -344,7 +338,7 @@ public class TextClient {
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
 			case "Make suggestion.":
-				makeSuggestion(player, board);
+				checkSuggestion(makeSuggestion(player, board), board);
 				break;
 			case "Make accusation.":
 				break;

@@ -379,4 +379,8 @@ public class Board {
 		return " ";
 	}
 
+	public List<CharacterToken> players() {
+		return activePlayers;
+	}
+
 }
