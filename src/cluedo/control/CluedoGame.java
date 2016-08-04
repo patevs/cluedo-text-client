@@ -10,6 +10,12 @@ import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.WeaponToken;
 
+/**
+ * Contains the game equipment, cards and players.
+ * 
+ * @author Patrick Evans and Maria Legaspi
+ *
+ */
 public class CluedoGame {
 	
 	

@@ -13,6 +13,12 @@ import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.GameToken;
 
+/**
+ * Holds the tokens and logic for moving the tokens around the board.
+ * 
+ * @author Patrick Evans and Maria Legaspi
+ *
+ */
 public class Board {
 
 	private int height;
@@ -65,29 +71,6 @@ public class Board {
 		}
 		// print the board for testing
 		//printBoard();
-	}
-	
-	/**
-	 * Prints the state of the board from the 2D board array
-	 */
-	private void printBoard(){
-		System.out.println("\n ");
-		for(int i=0; i<board[0].length; i++){
-			for(int j=0; j<board.length; j++){
-				if(board[i][j] != null){
-					System.out.print(board[i][j].getSymbol());
-				} else {
-					System.out.print(" ");
-				}		
-			}
-			System.out.print("\n");
-		}
-		System.out.print("\n ");
-	}
-	
-	public String toString(){
-		this.printBoard();
-		return " ";
 	}
 	
 	/**
@@ -337,7 +320,29 @@ public class Board {
 			default:
 				throw new CluedoError("Error: tile character not recognised");
 		}
-		
+	}
+	
+	/**
+	 * Prints the state of the board from the 2D board array
+	 */
+	private void printBoard(){
+		System.out.println("\n ");
+		for(int i=0; i<board[0].length; i++){
+			for(int j=0; j<board.length; j++){
+				if(board[i][j] != null){
+					System.out.print(board[i][j].getSymbol());
+				} else {
+					System.out.print(" ");
+				}		
+			}
+			System.out.print("\n");
+		}
+		System.out.print("\n ");
+	}
+	
+	public String toString(){
+		this.printBoard();
+		return " ";
 	}
 
 }

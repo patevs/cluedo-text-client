@@ -6,6 +6,9 @@ import cluedo.tokens.GameToken;
 
 /**
  * A room tile on the game board, which can hold a maximum of one game token.
+ * 
+ * @author Patrick Evans and Maria Legaspi
+ * 
  */
 public class RoomTile extends Tile{
 	
