@@ -161,8 +161,6 @@ public class CluedoGame {
 		return result;
 	}
 
-
-
 	/**
 	 * Represents the six characters in the game
 	 */
