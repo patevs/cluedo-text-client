@@ -25,6 +25,7 @@ public class CluedoGame {
 	private List<CharacterToken> activePlayers; // players still active in game
 	private static List<WeaponToken> weapons; // all weapons in game
 	private static List<Room> rooms; // all rooms in the game
+	private static List<Character> characters;
 	
 	private static List<Card> deck; // represents the deck of all cards
 	private static List<Card> unusedCards; // unused cards left after deal
@@ -36,12 +37,23 @@ public class CluedoGame {
 	public CluedoGame(List<CharacterToken> players, String boardFile) {
 		this.numberOfPlayers = players.size();
 		this.activePlayers = players;
+		CluedoGame.characters = getCharacters();
 		CluedoGame.weapons = getWeapons();
 		CluedoGame.rooms = getRooms();
 		CluedoGame.solution = getSolution();
 		CluedoGame.gameBoard = new Board(this, boardFile);
 		CluedoGame.deck = getDeck();
 		dealCards();
+	}
+
+	private static List<Character> getCharacters() {
+		List<Character> characters = new ArrayList<Character>();
+		// iterate over each weapon and add each one to the list
+		for(Character c: Character.values()){
+			characters.add(c);
+		}
+		// return the list of all weapons
+		return characters;
 	}
 
 	/**
@@ -74,6 +86,14 @@ public class CluedoGame {
 	 */
 	public static List<Room> rooms(){
 		return rooms;
+	}
+	
+	/**
+	 * Returns the list of all characters.
+	 * @return
+	 */
+	public static List<Character> characters(){
+		return characters;
 	}
 	
 	/**

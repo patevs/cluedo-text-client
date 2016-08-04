@@ -1,8 +1,6 @@
 package cluedo.board;
 
-import cluedo.control.CluedoError;
 import cluedo.control.CluedoGame;
-import cluedo.tokens.GameToken;
 
 /**
  * A room tile on the game board, which can hold a maximum of one game token.
@@ -33,6 +31,9 @@ public class RoomTile extends Tile{
 	
 	@Override
 	public char getSymbol(){
+		if(getToken() != null){
+			return getToken().getSymbol(); 
+		}
 		return symbol;
 	}
 	

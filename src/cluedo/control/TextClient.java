@@ -13,6 +13,8 @@ import java.util.Set;
 import cluedo.board.Board;
 import cluedo.board.RoomTile;
 import cluedo.board.Tile;
+import cluedo.control.CluedoGame.Room;
+import cluedo.control.CluedoGame.Weapon;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.GameToken;
@@ -34,14 +36,12 @@ public class TextClient {
 		
 	}
 	
-	private void turnOptions(){
-		
-	}
-	
 	/**
 	 * Get an integer from System.in
+	 * @param max 
+	 * @param min 
 	 */
-	private static int inputNumber(String msg) {
+	private static int inputNumber(String msg, int min, int max) {
 		// print message
 		System.out.print(msg + " ");
 		while (true) {
@@ -50,6 +50,9 @@ public class TextClient {
 			try {
 				// read a line of input
 				String s = in.readLine();
+				
+				int i = Integer.parseInt(s);
+				if(i > max || i < min) return inputNumber(msg, min, max);
 				// return as an integer
 				return Integer.parseInt(s);
 			} catch (IOException e) {
@@ -169,7 +172,7 @@ public class TextClient {
 			camelString += toProperCase(part) + " ";
 		}
 		// return the string
-		return camelString;
+		return camelString.trim();
 	}
 	/**
 	 * This is a helper method for converting strings to camel case
@@ -184,22 +187,34 @@ public class TextClient {
 	/**
 	 * Gets suspected murder elements from player.
 	 */
-	private static void makeSuggestion(CharacterToken player, Board board){
+	private static Card[] makeSuggestion(CharacterToken player, Board board){
 		// Crime scene
 		RoomTile crimeScene = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
 		System.out.println("Suggested crime scene is: " + crimeScene.name());
-				
-		// Gets the suspect
-		CharacterToken suspectToken = getSuspect();
 		
-		//TODO: weapons not assigned on board
-		// Gets the suspected murder weapon
-		WeaponToken weaponToken = getWeapon();
+		Card[] result = new Card[3];
+		
+		// Gets the suspect
+		result[0] = (Card)getSuspect();
+		result[1] = (Card)getWeapon();
+		
+		String roomName = crimeScene.name().toString();
+		for(Room r : CluedoGame.rooms()){
+			if(r.name().equals(roomName)){
+				result[2] = (Card)r;
+			}
+		}
+		
+		//board.moveIntoRoom(player, (Room)result[2]);
+		//board.moveIntoRoom((GameToken) result[1], (Room)result[2]);
+		
+		return result;
 		
 		// move character and weapon to room
-		moveCrimeTokens(player, suspectToken, crimeScene, board);
-		moveCrimeTokens(player, weaponToken, crimeScene, board);
+		//(player, suspectToken, crimeScene, board);
+		//moveCrimeTokens(player, weaponToken, crimeScene, board);
 		
+		/*
 		//TODO: go through players
 		for(CharacterToken witness: game.players()){
 			System.out.println("Calling witness: " + witness.getName());
@@ -213,6 +228,8 @@ public class TextClient {
 				break;
 			}
 		}
+		return null;
+		*/
 	}
 	
 	/**
@@ -220,48 +237,41 @@ public class TextClient {
 	 * @return
 	 */
 	private static WeaponToken getWeapon(){
-		String message = "Which weapon do you suggest is the murder weapon?";
 		// set up the tokens
-		ArrayList<String> weapons = new ArrayList<String>();	
+		ArrayList<WeaponToken> weapons = new ArrayList<WeaponToken>();	
 		// adding all characters to the tokens list
-		Set<CluedoGame.Weapon> weaponTokens = (Set<CluedoGame.Weapon>) EnumSet.allOf(CluedoGame.Weapon.class);
-		for(CluedoGame.Weapon w : weaponTokens){
-			weapons.add(w.toString().toLowerCase());
+		System.out.print("Weapons: ");
+		int count = 1;
+		for(WeaponToken w : CluedoGame.weapons()){
+			System.out.print(count + ") " + toCamelCase(w.toString()) + " ");
+			weapons.add(w);
+			count++;
 		}
-		// list remaining tokens
-		listTokens(weapons, "Possible murder weapons: ");
-		String weapon = inputString(message);
-		
-		// retry if the player enters an invalid token
-		while (!weapons.contains(weapon)) {
-			listTokens(weapons, "Invalid token! Must be one of: ");
-			weapon = inputString(message).toLowerCase();
-		}
-		return game.getWeapon(weapon);
+		WeaponToken suspect = weapons.get(inputNumber("\n Suggest a weapon: (num)", 1, weapons.size()) - 1);
+		return suspect;
 	}
 	
 	/**
 	 * Asks player for the suspect.
 	 * @return
 	 */
-	private static CharacterToken getSuspect(){
-		String message = "Which character do you suggest is the murderer?";
-		String suspect = inputString(message);
+	private static CluedoGame.Character getSuspect(){
 		// set up the tokens
-		ArrayList<String> suspects = new ArrayList<String>();	
-		// adding all characters to the tokens list
-		Set<CluedoGame.Character> characters = (Set<CluedoGame.Character>) EnumSet.allOf(CluedoGame.Character.class);
-		for(CluedoGame.Character c : characters){
-			suspects.add(c.toString().toLowerCase());
+		ArrayList<CluedoGame.Character> suspects = new ArrayList<CluedoGame.Character>();
+		
+		// adding all characters to the suspects list
+		System.out.print("Suspects: ");
+		int count = 1;
+		for(CluedoGame.Character c : CluedoGame.characters()){
+			System.out.print(count + ") " + toCamelCase(c.toString()) + " ");
+			suspects.add(c);
+			count++;
 		}
-		// list remaining tokens
-		listTokens(suspects, "Possible suspects: ");
+		
 		// retry if the player enters an invalid token
-		while (!suspects.contains(suspect)) {
-			listTokens(suspects, "Invalid token! Must be one of: ");
-			suspect = inputString(message).toLowerCase();
-		}
-		return game.getCharacter(suspect);
+		CluedoGame.Character suspect = suspects.get(inputNumber("\n Suggest a murderer: (num)", 1, suspects.size()) - 1);
+		
+		return suspect;
 	}
 	
 	/**
@@ -310,9 +320,6 @@ public class TextClient {
 	 */
 	private static void executeChoice(String choice, CharacterToken player, Board board){
 		switch(choice){
-			case "Look at hand.":
-				System.out.println("Your hand: " + player.getHand().toString());
-				break;
 			case "Move North.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveNorth(player);
@@ -333,11 +340,16 @@ public class TextClient {
 				board.moveWest(player);
 				board.toString();
 				break;
-			case "Exit room.":
+			case "Look at hand.":
+				System.out.println("Your hand: " + player.getHand().toString());
+				break;
 			case "Make suggestion.":
 				makeSuggestion(player, board);
+				break;
 			case "Make accusation.":
+				break;
 			case "View help":
+				break;
 			case "End turn.":
 				player.setRemainingSteps(0);
 				break;
@@ -361,7 +373,7 @@ public class TextClient {
 			System.out.println((i+1) + ") " + options.get(i));
 		}
 		// return player choice
-		return options.get(inputNumber("Select option number") - 1);
+		return options.get(inputNumber("Select option number", 1, options.size()) - 1);
 	}
 	
 	/**
@@ -372,7 +384,6 @@ public class TextClient {
 	 */
 	private static List<String> playerOptions(CharacterToken player, Board board){
 		List<String> options = new ArrayList<String>();
-		options.add("Look at hand.");
 		if(player.getRemainingSteps() > 0){
 			if(board.canMoveNorth(player)){
 				options.add("Move North.");
@@ -391,6 +402,7 @@ public class TextClient {
 			options.add("Make suggestion.");
 		}
 		options.add("Make accusation.");
+		options.add("Look at hand.");
 		options.add("View help");
 		options.add("End turn.");
 		return options;
@@ -433,7 +445,7 @@ public class TextClient {
 		System.out.println(" ");
 		
 		// get number of players in game
-		int nplayers = inputNumber("Enter number of players (3-6)");
+		int nplayers = inputNumber("Enter number of players (3-6)", 3, 6);
 		// throw exception or exit?
 		if(nplayers < 3 || nplayers > 6){
 			throw new CluedoError("Invalid number of players: " + nplayers);
@@ -479,7 +491,7 @@ public class TextClient {
 				int roll = die.nextInt(6) + 1;
 				player.setRemainingSteps(roll);
 				board.toString(); // print the board
-				System.out.println("(player " + player.getUid() + ": " + player.getToken() + ") rolls a " + roll);
+				System.out.print("(player " + player.getUid() + ": " + player.getToken() + ") rolls a " + roll);
 				while(player.getRemainingSteps() > 0){
 					executeChoice(getPlayerChoice(player, board), player, board);
 				}

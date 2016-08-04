@@ -107,4 +107,9 @@ public class CharacterToken extends GameToken{
 	public String toString(){
 		return name.toString();
 	}
+
+	@Override
+	public char getSymbol() {
+		return java.lang.Character.forDigit(getUid(), 10);
+	}
 }

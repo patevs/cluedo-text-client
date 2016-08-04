@@ -51,4 +51,6 @@ public abstract class GameToken {
 	
 	@Override
 	public abstract String toString();
+	
+	public abstract char getSymbol();
 }

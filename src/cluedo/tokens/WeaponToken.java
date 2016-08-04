@@ -5,7 +5,7 @@ import cluedo.control.CluedoGame.Weapon;
 /**
  * Weapon token on the board that can be moved by players.
  */
-public class WeaponToken extends GameToken{
+public class WeaponToken extends GameToken implements Card{
 	
 	private Weapon name;
 	
@@ -19,5 +19,11 @@ public class WeaponToken extends GameToken{
 	
 	public String toString(){
 		return name.toString();
+	}
+
+	@Override
+	public char getSymbol() {
+		// TODO fix
+		return '$';
 	}
 }

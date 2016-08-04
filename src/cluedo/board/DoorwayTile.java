@@ -13,5 +13,13 @@ public class DoorwayTile extends Tile{
 	public DoorwayTile(Position pos, char symbol){
 		super(pos, symbol);
 	}
+	
+	@Override
+	public char getSymbol(){
+		if(super.getToken() != null){
+			return getToken().getSymbol(); 
+		}
+		return symbol;
+	}
 
 }

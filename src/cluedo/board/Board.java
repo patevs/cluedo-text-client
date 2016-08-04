@@ -70,8 +70,6 @@ public class Board {
 		} catch(IOException e) {
 			System.out.println("Error processing board file");
 		}
-		// print the board for testing
-		//printBoard();
 	}
 	
 	/**
@@ -83,7 +81,19 @@ public class Board {
 		int Xpos = token.getXPos();
 		int Ypos = token.getYPos();
 		Tile t = board[Ypos][Xpos];
-		return Character.isUpperCase(t.getSymbol());
+		return(t instanceof RoomTile);
+	}
+	
+	/**
+	 * Returns true if a given token is in any doorway
+	 * @param token
+	 * @return
+	 */
+	public boolean inDoorway(GameToken token){
+		int Xpos = token.getXPos();
+		int Ypos = token.getYPos();
+		Tile t = board[Ypos][Xpos];
+		return(t instanceof DoorwayTile);
 	}
 
 	/**
@@ -97,29 +107,22 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if tile above is occupied or is a wall tile
-		Tile destination = board[token.getYPos()-1][token.getXPos()];
-		if(destination instanceof WallTile){
-			return false;
-		}
-		if(destination.getToken()!=null){ 
-			return false;
-		}
-		
-		/*// can only exit if in room
-		if(inRoom(token)){
-			return false;
-		}
-		
 		// cannot move if north is a room, invalid tile, or entrance which is not north
 		int xpos = token.getXPos();
 		int ypos = token.getYPos();
 		Tile t = board[ypos-1][xpos];
 		char symbol = t.getSymbol();
+		if(t.getToken()!=null){ 
+			return false;
+		}
+		if(inDoorway(token) || inRoom(token)){
+			return Character.isUpperCase(symbol) || symbol == 'n' 
+					|| symbol == 'e' || symbol == 's' || symbol == 'w';
+		}
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'e' || symbol == 's' || symbol == 'w'){
 			return false;
-		} */
+		}
 		return true;
 	}
 	
@@ -134,29 +137,22 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if next tile is occupied or is a wall tile
-		Tile destination = board[token.getYPos()][token.getXPos()+1];
-		if(destination instanceof WallTile){
-			return false;
-		}
-		if(destination.getToken()!=null){ 
-			return false;
-		}
-				
-		/*// can only exit if in room
-		if(inRoom(token)){
-			return false;
-		}
-		
 		// cannot move if east is a room, invalid tile, or entrance which is not north
 		int xpos = token.getXPos();
 		int ypos = token.getYPos();
 		Tile t = board[ypos][xpos + 1];
 		char symbol = t.getSymbol();
+		if(t.getToken()!=null){ 
+			return false;
+		}
+		if(inDoorway(token) || inRoom(token)){
+			return Character.isUpperCase(symbol) || symbol == 'n' 
+					|| symbol == 'e' || symbol == 's' || symbol == 'w';
+		}
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 's' || symbol == 'w'){
 			return false;
-		} */
+		}
 		return true;
 	}
 	
@@ -171,29 +167,22 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if below tile is occupied or is a wall tile
-		Tile destination = board[token.getYPos()+1][token.getXPos()];
-		if(destination instanceof WallTile){
-			return false;
-		}
-		if(destination.getToken()!=null){ 
-			return false;
-		}
-				
-		/*// can only exit if in room
-		if(inRoom(token)){
-			return false;
-		}
-		
 		// cannot move if south is a room, invalid tile, or entrance which is not south
 		int xpos = token.getXPos();
 		int ypos = token.getYPos();
 		Tile t = board[ypos+1][xpos];
 		char symbol = t.getSymbol();
+		if(t.getToken()!=null){ 
+			return false;
+		}
+		if(inDoorway(token) || inRoom(token)){
+			return Character.isUpperCase(symbol) || symbol == 'n' 
+					|| symbol == 'e' || symbol == 's' || symbol == 'w';
+		}
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 'e' || symbol == 'w'){
 			return false;
-		} */
+		}
 		return true;
 	}
 	
@@ -208,29 +197,22 @@ public class Board {
 			return false;
 		}
 		
-		// cannot move if next tile is occupied or is a wall tile
-		Tile destination = board[token.getYPos()][token.getXPos()-1];
-		if(destination instanceof WallTile){
-			return false;
-		}
-		if(destination.getToken()!=null){ 
-			return false;
-		}
-				
-		/*// can only exit if in room
-		if(inRoom(token)){
-			return false;
-		}
-		
 		// cannot move if west is a room, invalid tile, or entrance which is not north
 		int xpos = token.getXPos();
 		int ypos = token.getYPos();
 		Tile t = board[ypos][xpos - 1];
 		char symbol = t.getSymbol();
+		if(t.getToken()!=null){ 
+			return false;
+		}
+		if(inDoorway(token) || inRoom(token)){
+			return Character.isUpperCase(symbol) || symbol == 'n' 
+					|| symbol == 'e' || symbol == 's' || symbol == 'w';
+		}
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 'e' || symbol == 's'){
 			return false;
-		} */
+		}
 		return true;
 	}
 	
@@ -242,7 +224,7 @@ public class Board {
 		Point newPos = new Point(player.getXPos(), player.getYPos()-1);
 		move(newPos, player);
 	}	
-	
+
 	/**
 	 * Moves player one position to the right
 	 * @param player
@@ -294,6 +276,45 @@ public class Board {
 	
 	public Tile getTile(int x, int y){
 		return board[y][x];
+	}
+	
+	public void moveIntoRoom(GameToken token, Room r) {
+		char symbol = getRoomSymbol(r);
+		for(int i=0; i<board[0].length; i++){
+			for(int j=0; j<board.length; j++){
+				Tile t = board[i][j];
+				if(t.getSymbol() == symbol && t.getToken() == null){
+					token.setXPos(j);
+					token.setYPos(i);
+					t.setToken(token);
+				}		
+			}
+		}
+	}
+
+	private char getRoomSymbol(Room r) {
+		switch(r){
+			case KITCHEN :
+				return 'K';
+			case BALL_ROOM:
+				return 'B';
+			case CONSERVATORY:
+				return 'C';
+			case DINING_ROOM:
+				return 'N';
+			case BILLIARD_ROOM:
+				return 'I';
+			case LIBRARY:
+				return 'L';
+			case LOUNGE:
+				return 'O';
+			case HALL:
+				return 'H';
+			case STUDY:
+				return 'L';
+			default:
+				return (Character) null;
+		}
 	}
 	
 	/**
@@ -351,7 +372,6 @@ public class Board {
 			}
 			System.out.print("\n");
 		}
-		System.out.print("\n ");
 	}
 	
 	public String toString(){
