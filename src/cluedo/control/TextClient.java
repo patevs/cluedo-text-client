@@ -203,7 +203,15 @@ public class TextClient {
 		//TODO: go through players
 		for(CharacterToken witness: game.players()){
 			System.out.println("Calling witness: " + witness.getName());
-			
+			System.out.println(player.getName() + " suggests that " + suspectToken.getName() +
+					" used the " + weaponToken.getName() + " to commit the murder in the " +
+					crimeScene.name());
+			List<Card>hand = witness.getHand();
+			///TODO: add room cards
+			if(hand.contains(suspectToken)||hand.contains(weaponToken)){
+				//TODO: get witness to pick a card to show
+				break;
+			}
 		}
 	}
 	
