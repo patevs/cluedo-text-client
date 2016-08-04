@@ -212,6 +212,12 @@ public class TextClient {
 		return result;
 	}
 	
+	/**
+	 * Checks a given suggestion made by a player
+	 * @param suggestion
+	 * @param board
+	 * @return
+	 */
 	private static boolean checkSuggestion(Card[] suggestion, Board board){
 		for (CharacterToken p : board.players()) {
 			for(Card c : p.getHand()){
@@ -345,6 +351,7 @@ public class TextClient {
 			case "Make accusation.":
 				break;
 			case "View help":
+				viewHelp();
 				break;
 			case "End turn.":
 				player.setRemainingSteps(0);
@@ -402,6 +409,42 @@ public class TextClient {
 		options.add("View help");
 		options.add("End turn.");
 		return options;
+	}
+	
+	/**
+	 * Prints out a helper guide for the player
+	 */
+	public static void viewHelp(){
+		System.out.println("----------------- CLUEDO GUIDE -------------------");
+		System.out.println("Players' tokens are represented by unqiue ID numbers");
+		System.out.println();
+		System.out.println("'x' represents a wall tile");
+		System.out.println();
+		System.out.println("CAPITAL LETTERS represent a room, where: ");
+		System.out.println("- 'K' represents (K)itchen");
+		System.out.println("- 'B' represents (B)all Room");
+		System.out.println("- 'C' represents (C)onservatory");
+		System.out.println("- 'I' represents B(I)lliard Room");
+		System.out.println("- 'L' represents (L)ibrary");
+		System.out.println("- 'S' represents (S)tudy");
+		System.out.println("- 'H' represents (H)all");
+		System.out.println("- 'O' represents L(O)unge");
+		System.out.println("- 'N' represents Di(N)ing Room");
+		System.out.println();
+		System.out.println("'n', 's', 'w' and 'e' represent a doorway to a room, where: ");
+		System.out.println("- 'n' means only a \"Move North\" can enter the room");
+		System.out.println("- 's' means only a \"Move South\" can enter the room");
+		System.out.println("- 'w' means only a \"Move West\" can enter the room");
+		System.out.println("- 'e' means only a \"Move East\" can enter the room");
+		System.out.println("Weapons are represented by symbols, where: ");
+		System.out.println("- '+' represents Candlestick");
+		System.out.println("- '-' represents Dagger");
+		System.out.println("- '/' represents Lead Pipe");
+		System.out.println("- '*' represents Revolver");
+		System.out.println("- '=' represents Rope");
+		System.out.println("- '?' represents Spanner");
+		System.out.println("------------------------------------------------------");
+		System.out.println();
 	}
 
 	public static void main(String[] args){
