@@ -61,6 +61,10 @@ public class CharacterToken extends GameToken{
 		return isPlayer;
 	}
 	
+	public void isPlayer(boolean active){
+		this.isPlayer = active;
+	}
+	
 	/**
 	 * Returns the uid of this character token.
 	 * @return

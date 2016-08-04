@@ -34,8 +34,8 @@ public class CluedoGame {
 	private static Board gameBoard; // the game board
 
 
-	public CluedoGame(List<CharacterToken> players, String boardFile) {
-		this.numberOfPlayers = players.size();
+	public CluedoGame(int nPlayers, List<CharacterToken> players, String boardFile) {
+		this.numberOfPlayers = nPlayers;
 		this.activePlayers = players;
 		CluedoGame.characters = getCharacters();
 		CluedoGame.weapons = getWeapons();
@@ -226,8 +226,10 @@ public class CluedoGame {
 		// deal cards evenly to players
 		int numCardsToDeal = deck.size() / numPlayers();
 		for(CharacterToken player: players()){
-			for(int i=0; i<numCardsToDeal; i++){
-				player.addCard(getCardFromDeck());
+			if(player.isPlayer()){ // makes sure this is a player not just an empty character
+				for(int i=0; i<numCardsToDeal; i++){
+					player.addCard(getCardFromDeck());
+				}
 			}
 		}
 	}

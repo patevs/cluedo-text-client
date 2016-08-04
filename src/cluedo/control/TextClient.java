@@ -31,6 +31,7 @@ public class TextClient {
 	
 	private static int uid = 0;
 	private static CluedoGame game;
+	private static boolean endTurn = false; // ends the turn after making an accusation or false suggestion
 	
 	public TextClient() {
 		
@@ -184,7 +185,52 @@ public class TextClient {
 	}
 
 	/**
-	 * Gets suspected murder elements from player.
+	 * Gets suspected murder elements from player for an accusation.
+	 * @param player
+	 * @param board
+	 * @return
+	 */
+	private static Card[] makeAccusation(CharacterToken player, Board board){
+		Card[] result = new Card[3];
+		
+		// Gets the suspect
+		result[0] = (Card)getSuspect();
+		result[1] = (Card)getCrimeScene();
+		result[2] = (Card)getWeapon();
+
+		System.out.println("You accuse " + result[0].toString() + " of committing the crime in the " + result[1].toString() +
+				" with the " + result[2].toString());
+		
+		return result;
+	}
+	
+	/**
+	 * Checks if the player's accusation is correct. Prints message and returns true if player is correct.
+	 * @param results
+	 * @param board
+	 * @return
+	 */
+	private static boolean checkAccusation(Card[] results, Board board){
+		Card[] solution = game.Solution();
+		if(results==solution){
+			System.out.println("+-+-+-+ +-+-+-+");
+			System.out.println("|Y|o|u| |W|i|n|");
+			System.out.println("+-+-+-+ +-+-+-+");
+			System.out.println("\n");
+			System.out.println("The crime was committed by " + solution[0].toString() + 
+					" in the " + solution[1].toString() + " with the " + solution[2].toString());
+			return true;
+		}
+		System.out.println("+-+-+-+ +-+-+-+-+");
+		System.out.println("|Y|o|u| |L|o|s|e|");
+		System.out.println("+-+-+-+ +-+-+-+-+");
+		System.out.println("The crime was not committed by " + solution[0].toString() + 
+				" in the " + solution[1].toString() + " with the " + solution[2].toString());
+		return false;
+	}
+	
+	/**
+	 * Gets suspected murder elements from player for a suggestion.
 	 */
 	private static Card[] makeSuggestion(CharacterToken player, Board board){
 		// Crime scene
@@ -195,43 +241,70 @@ public class TextClient {
 		
 		// Gets the suspect
 		result[0] = (Card)getSuspect();
-		result[1] = (Card)getWeapon();
 		
-		
-		// TODO get room card and move supects to room
+		// TODO get room card and move suspects to room
 		String roomName = crimeScene.name().toString();
 		for(Room r : CluedoGame.rooms()){
 			if(r.name().equals(roomName)){
-				result[2] = (Card)r;
+				result[1] = (Card)r;
 			}
 		}
-		
 		//board.moveIntoRoom(player, (Room)result[2]);
 		//board.moveIntoRoom((GameToken) result[1], (Room)result[2]);
 		
+		result[2] = (Card)getWeapon();
+				
+		System.out.println("You suggest the crime was committed in the "+result[1].toString()+
+				" by " + result[0].toString() + " with the " + result[2].toString());
 		return result;
 	}
 	
 	/**
-	 * Checks a given suggestion made by a player
+	 * Checks a given suggestion made by a player and returns true if refuted.
 	 * @param suggestion
 	 * @param board
 	 * @return
 	 */
 	private static boolean checkSuggestion(Card[] suggestion, Board board){
 		for (CharacterToken p : board.players()) {
-			for(Card c : p.getHand()){
-				for(int i=0; i<suggestion.length; i++){
-					if(c.equals(suggestion[i])){
-						System.out.println(p.getName() + " has the card "
-								+ c.toString());
-						return true;
+			if(p.isPlayer()){
+				for(Card c : p.getHand()){
+					for(int i=0; i<suggestion.length; i++){
+						if(c.equals(suggestion[i])){
+							System.out.println(p.getName() + " has the card "
+									+ c.toString());
+							return true;
+						}
 					}
 				}
 			}
 		}
-		System.out.println("Your suggestion cannot be refutted");
+		System.out.println("Your suggestion cannot be refuted");
 		return false;
+	}
+	
+	/**
+	 * Asks player for the room.
+	 * @return
+	 */
+	private static CluedoGame.Room getCrimeScene(){
+		// set up the tokens
+		ArrayList<CluedoGame.Room> crimeScenes = new ArrayList<CluedoGame.Room>();
+		
+		// adding all characters to the suspects list
+		System.out.print("Rooms: ");
+		int count = 1;
+		for(CluedoGame.Room r : CluedoGame.rooms()){
+			System.out.print(count + ") " + toCamelCase(r.toString()) + " ");
+			crimeScenes.add(r);
+			count++;
+		}
+		
+		// retry if the player enters an invalid token
+		CluedoGame.Room scene = crimeScenes.get(inputNumber("\n Suggest a crime scene: (num)", 1, 
+				crimeScenes.size()) - 1);
+		
+		return scene;
 	}
 	
 	/**
@@ -346,9 +419,14 @@ public class TextClient {
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
 			case "Make suggestion.":
-				checkSuggestion(makeSuggestion(player, board), board);
+				if(checkSuggestion(makeSuggestion(player, board), board)) // if refuted, player's turn ends
+					endTurn = true;
 				break;
 			case "Make accusation.":
+				if(!checkAccusation(makeAccusation(player, board),board)){
+					player.isPlayer(false);
+				}
+				endTurn = true;
 				break;
 			case "View help":
 				viewHelp();
@@ -500,7 +578,7 @@ public class TextClient {
 		// TODO:add extra tokens to board
 			
 		// create a new cluedo game
-		game = new CluedoGame(players, boardName);
+		game = new CluedoGame(nplayers, players, boardName);
 		Board board = game.board();
 		
 		System.out.println("\nCards have been dealt, the game begins!");
@@ -531,9 +609,10 @@ public class TextClient {
 				player.setRemainingSteps(roll);
 				board.toString(); // print the board
 				System.out.print("(player " + player.getUid() + ": " + player.getToken() + ") rolls a " + roll);
-				while(player.getRemainingSteps() > 0){
+				while(player.getRemainingSteps() > 0 && !endTurn){
 					executeChoice(getPlayerChoice(player, board), player, board);
 				}
+				endTurn = false; // reset for next player
 			}
 			//boo = false;
 		}
