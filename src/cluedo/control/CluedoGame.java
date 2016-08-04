@@ -143,6 +143,17 @@ public class CluedoGame {
 	}
 	
 	/**
+	 * Checks to see if there are still active players.
+	 * @return
+	 */
+	public boolean activePlayers(){
+		for(CharacterToken player: activePlayers){
+			if(player.isPlayer())
+				return true;
+		}
+		return false;
+	}
+	/**
 	 * Returns the character token with the given name.
 	 * @param name
 	 * @return

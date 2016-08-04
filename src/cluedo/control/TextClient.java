@@ -31,7 +31,9 @@ public class TextClient {
 	
 	private static int uid = 0;
 	private static CluedoGame game;
+	private static Board board;
 	private static boolean endTurn = false; // ends the turn after making an accusation or false suggestion
+	private static boolean gameWon = false;
 	
 	public TextClient() {
 		
@@ -190,7 +192,7 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	private static Card[] makeAccusation(CharacterToken player, Board board){
+	private static Card[] makeAccusation(CharacterToken player){
 		Card[] result = new Card[3];
 		
 		// Gets the suspect
@@ -211,7 +213,7 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	private static boolean checkAccusation(Card[] results, Board board){
+	private static boolean checkAccusation(Card[] results){
 		Card[] solution = game.Solution();
 
 		// checks each card by name
@@ -238,7 +240,7 @@ public class TextClient {
 	/**
 	 * Gets suspected murder elements from player for a suggestion.
 	 */
-	private static Card[] makeSuggestion(CharacterToken player, Board board){
+	private static Card[] makeSuggestion(CharacterToken player){
 		// Crime scene
 		RoomTile crimeScene = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
 		System.out.println("Suggested crime scene is: " + crimeScene.name());
@@ -271,7 +273,7 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	private static boolean checkSuggestion(Card[] suggestion, Board board){
+	private static boolean checkSuggestion(Card[] suggestion){
 		for (CharacterToken p : board.players()) {
 			if(p.isPlayer()){
 				for(Card c : p.getHand()){
@@ -362,10 +364,10 @@ public class TextClient {
 	 * @param crimeScene
 	 * @param board
 	 */
-	private static void moveCrimeTokens(CharacterToken player, GameToken token, RoomTile crimeScene, Board board){
+	private static void moveCrimeTokens(CharacterToken player, GameToken token, RoomTile crimeScene){
 		Tile current = board.getTile(token.getXPos(), token.getYPos());
 		if(current != crimeScene){
-			Tile destination = nextTile(board, player.getXPos(), player.getYPos());
+			Tile destination = nextTile(player.getXPos(), player.getYPos());
 			if(destination==null){
 				throw new CluedoError("Could not find space in the room for token");
 			}
@@ -380,7 +382,7 @@ public class TextClient {
 	 * @param y
 	 * @return
 	 */
-	private static Tile nextTile(Board board, int x, int y){
+	private static Tile nextTile(int x, int y){
 		Tile destination = board.getTile(x, y);
 		for(int i = -2; i < 3; i++){
 			for(int j = -2; j < 3; j++){
@@ -399,7 +401,7 @@ public class TextClient {
 	 * @param player
 	 * @param board
 	 */
-	private static void executeChoice(String choice, CharacterToken player, Board board){
+	private static void executeChoice(String choice, CharacterToken player){
 		switch(choice){
 			case "Move North.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
@@ -425,12 +427,21 @@ public class TextClient {
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
 			case "Make suggestion.":
-				if(checkSuggestion(makeSuggestion(player, board), board)) // if refuted, player's turn ends
+				if(checkSuggestion(makeSuggestion(player))) // if refuted, player's turn ends
 					endTurn = true;
 				break;
 			case "Make accusation.":
-				if(!checkAccusation(makeAccusation(player, board),board)){
+				if(!checkAccusation(makeAccusation(player))){
 					player.isPlayer(false);
+					// displays game end message if all players have lost
+					if(!game.activePlayers()){
+						viewGameEnd(player);
+					}
+				}
+				else{
+					// displays game end message if player accused correctly
+					gameWon = true;
+					viewGameEnd(player);
 				}
 				endTurn = true;
 				break;
@@ -450,12 +461,12 @@ public class TextClient {
 	 * @param player
 	 * @param board
 	 */
-	private static String getPlayerChoice(CharacterToken player, Board board) {
+	private static String getPlayerChoice(CharacterToken player) {
 		System.out.println("\n (player " + player.getUid() + ": " + player.getToken() + ") you have " 
 				+ player.getRemainingSteps() + " step(s) remaining");
 		System.out.println("Please make a choice: ");
 		// get player options
-		List<String> options = playerOptions(player, board);
+		List<String> options = playerOptions(player);
 		for(int i=0; i<options.size(); i++){
 			System.out.println((i+1) + ") " + options.get(i));
 		}
@@ -469,7 +480,7 @@ public class TextClient {
 	 * @param board
 	 * @return list of options
 	 */
-	private static List<String> playerOptions(CharacterToken player, Board board){
+	private static List<String> playerOptions(CharacterToken player){
 		List<String> options = new ArrayList<String>();
 		if(player.getRemainingSteps() > 0){
 			if(board.canMoveNorth(player)){
@@ -493,6 +504,25 @@ public class TextClient {
 		options.add("View help");
 		options.add("End turn.");
 		return options;
+	}
+	
+	/**
+	 * Shows game end message.
+	 * @param player
+	 */
+	private static void viewGameEnd(CharacterToken player){
+			  System.out.println("______  _______ _______ _______       _____  _        _ _______  _____");
+			  System.out.println("|       |     | |  |  | |            |     |  \\      /  |       |     \\");
+			  System.out.println("|  ____ |_____| |  |  | |______      |     |   \\    /   |______ |_____/");
+			  System.out.println("|     | |     | |  |  | |            |     |    \\  /    |       |    \\");
+			  System.out.println("|_____| |     | |  |  | |______      |_____|     \\/     |______ |     \\_");      
+		if(gameWon){   
+			System.out.println("\t\t\t" + player.getName() + " solved the crime!");
+		}
+		else{
+			System.out.println("\t\t\tThe crime goes unsolved");
+		}
+		gameWon = true;
 	}
 	
 	/**
@@ -580,12 +610,10 @@ public class TextClient {
 		for(CharacterToken c: players){
 			System.out.println("player " + c.getUid() + ": " + c.getToken() + " played by " + c.getName());
 		}
-		
-		// TODO:add extra tokens to board
 			
 		// create a new cluedo game
 		game = new CluedoGame(nplayers, players, boardName);
-		Board board = game.board();
+		board = game.board();
 		
 		System.out.println("\nCards have been dealt, the game begins!");
 		// print out any unused cards
@@ -604,9 +632,8 @@ public class TextClient {
 		
 		// now the game begins
 		Random die = new Random();
-		boolean boo = true;
 		// loop until game ends
-		while(boo){
+		while(!gameWon){
 			for(CharacterToken player: game.players()){
 				if(!player.isPlayer()) // only give turns to players
 					continue;
@@ -616,11 +643,10 @@ public class TextClient {
 				board.toString(); // print the board
 				System.out.print("(player " + player.getUid() + ": " + player.getToken() + ") rolls a " + roll);
 				while(player.getRemainingSteps() > 0 && !endTurn){
-					executeChoice(getPlayerChoice(player, board), player, board);
+					executeChoice(getPlayerChoice(player), player);
 				}
 				endTurn = false; // reset for next player
 			}
-			//boo = false;
 		}
 	}
 }
