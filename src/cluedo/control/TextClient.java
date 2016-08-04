@@ -197,6 +197,8 @@ public class TextClient {
 		result[0] = (Card)getSuspect();
 		result[1] = (Card)getWeapon();
 		
+		
+		// TODO get room card and move supects to room
 		String roomName = crimeScene.name().toString();
 		for(Room r : CluedoGame.rooms()){
 			if(r.name().equals(roomName)){

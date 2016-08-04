@@ -23,7 +23,21 @@ public class WeaponToken extends GameToken implements Card{
 
 	@Override
 	public char getSymbol() {
-		// TODO fix
-		return '$';
+		switch(getName()){
+			case "CANDLESTICK":
+				return '+';
+			case "DAGGER":
+				return '-';
+			case "LEAD PIPE":
+				return '/';
+			case "REVOLVER":
+				return '*';
+			case "ROPE":
+				return '=';
+			case "SPANNER":
+				return '?';
+			default:
+				return (Character) null;
+		}
 	}
 }

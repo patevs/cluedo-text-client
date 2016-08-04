@@ -293,24 +293,24 @@ public class Board {
 	}
 
 	private char getRoomSymbol(Room r) {
-		switch(r){
-			case KITCHEN :
+		switch(r.toString()){
+			case "KITCHEN" :
 				return 'K';
-			case BALL_ROOM:
+			case "BALL_ROOM":
 				return 'B';
-			case CONSERVATORY:
+			case "CONSERVATORY":
 				return 'C';
-			case DINING_ROOM:
+			case "DINING_ROOM":
 				return 'N';
-			case BILLIARD_ROOM:
+			case "BILLIARD_ROOM":
 				return 'I';
-			case LIBRARY:
+			case "LIBRARY":
 				return 'L';
-			case LOUNGE:
+			case "LOUNGE":
 				return 'O';
-			case HALL:
+			case "HALL":
 				return 'H';
-			case STUDY:
+			case "STUDY":
 				return 'L';
 			default:
 				return (Character) null;
