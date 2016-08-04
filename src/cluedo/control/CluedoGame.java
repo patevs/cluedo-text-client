@@ -2,14 +2,22 @@ package cluedo.control;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import cluedo.board.Board;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.WeaponToken;
 
+/**
+ * Contains the game equipment, cards and players.
+ * 
+ * @author Patrick Evans and Maria Legaspi
+ *
+ */
 public class CluedoGame {
 	
 	
@@ -51,24 +59,49 @@ public class CluedoGame {
 	public List<CharacterToken> players(){
 		return activePlayers;
 	}
+	
+	/**
+	 * Returns the list of all weapons.
+	 * @return
+	 */
 	public static List<WeaponToken> weapons(){
 		return weapons;
 	}
+	
+	/**
+	 * Returns the list of all rooms.
+	 * @return
+	 */
 	public static List<Room> rooms(){
 		return rooms;
 	}
+	
+	/**
+	 * Returns the list of all cards in the deck.
+	 * @return
+	 */
 	public static List<Card> deck(){
 		return deck;
 	}
+	
+	/**
+	 * Retur the board.
+	 * @return
+	 */
 	public static Board board(){
 		return gameBoard;
 	}
+	
+	/**
+	 * Returns the list of extra cards.
+	 * @return
+	 */
 	public List<Card> unusedCards(){
 		return unusedCards;
 	}
 	
 	/**
-	 * This method gets a random solution to the cluedo game.
+	 * This method gets a random solution to the Cluedo game.
 	 *  The solution contains one Character card, one Room card, 
 	 *  and one weapon card.
 	 * @return solution
@@ -82,11 +115,25 @@ public class CluedoGame {
 	}
 	
 	/**
-	 * returns the game solution
+	 * Returns the game solution
 	 * @return game solution
 	 */
 	public Card[] Solution(){
 		return solution;
+	}
+	
+	/**
+	 * Returns the character token with the given name.
+	 * @param name
+	 * @return
+	 */
+	public CharacterToken getCharacter(String name){
+		CharacterToken charToken = null;
+		for(CharacterToken character: activePlayers){
+			if(character.getName().equalsIgnoreCase(name))
+				charToken = character;
+		}
+		return charToken;
 	}
 
 	/** 
@@ -103,6 +150,20 @@ public class CluedoGame {
 		}
 		// return the list of all weapons
 		return weapons;
+	}
+	
+	/**
+	 * Returns the weapon token with a given name.
+	 * @param name
+	 * @return
+	 */
+	public WeaponToken getWeapon(String name){
+		WeaponToken weaponToken = null;
+		for(WeaponToken weapon: weapons){
+			if(weapon.getName().equalsIgnoreCase(name))
+				weaponToken = weapon;
+		}
+		return weaponToken;
 	}
 	
 	/**

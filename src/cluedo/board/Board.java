@@ -1,4 +1,5 @@
 package cluedo.board;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +12,14 @@ import cluedo.control.CluedoGame.Room;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.GameToken;
+import cluedo.tokens.WeaponToken;
 
+/**
+ * Holds the tokens and logic for moving the tokens around the board.
+ * 
+ * @author Patrick Evans and Maria Legaspi
+ *
+ */
 public class Board {
 
 	private int height;
@@ -67,29 +75,6 @@ public class Board {
 	}
 	
 	/**
-	 * Prints the state of the board from the 2D board array
-	 */
-	private void printBoard(){
-		System.out.println("\n ");
-		for(int i=0; i<board[0].length; i++){
-			for(int j=0; j<board.length; j++){
-				if(board[i][j] != null){
-					System.out.print(board[i][j].getSymbol());
-				} else {
-					System.out.print(" ");
-				}		
-			}
-			System.out.print("\n");
-		}
-		System.out.print("\n ");
-	}
-	
-	public String toString(){
-		this.printBoard();
-		return " ";
-	}
-	
-	/**
 	 * Returns true if a given token is in any room
 	 * @param token
 	 * @return
@@ -100,7 +85,7 @@ public class Board {
 		Tile t = board[Ypos][Xpos];
 		return Character.isUpperCase(t.getSymbol());
 	}
-	
+
 	/**
 	 * Returns true if a given player can move north on the board
 	 * @param token
@@ -112,7 +97,16 @@ public class Board {
 			return false;
 		}
 		
-		// can only exit if in room
+		// cannot move if tile above is occupied or is a wall tile
+		Tile destination = board[token.getYPos()-1][token.getXPos()];
+		if(destination instanceof WallTile){
+			return false;
+		}
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+		
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -125,7 +119,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'e' || symbol == 's' || symbol == 'w'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -140,7 +134,16 @@ public class Board {
 			return false;
 		}
 		
-		// can only exit if in room
+		// cannot move if next tile is occupied or is a wall tile
+		Tile destination = board[token.getYPos()][token.getXPos()+1];
+		if(destination instanceof WallTile){
+			return false;
+		}
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+				
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -153,7 +156,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 's' || symbol == 'w'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -168,7 +171,16 @@ public class Board {
 			return false;
 		}
 		
-		// can only exit if in room
+		// cannot move if below tile is occupied or is a wall tile
+		Tile destination = board[token.getYPos()+1][token.getXPos()];
+		if(destination instanceof WallTile){
+			return false;
+		}
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+				
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -181,7 +193,7 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 'e' || symbol == 'w'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
@@ -196,7 +208,16 @@ public class Board {
 			return false;
 		}
 		
-		// can only exit if in room
+		// cannot move if next tile is occupied or is a wall tile
+		Tile destination = board[token.getYPos()][token.getXPos()-1];
+		if(destination instanceof WallTile){
+			return false;
+		}
+		if(destination.getToken()!=null){ 
+			return false;
+		}
+				
+		/*// can only exit if in room
 		if(inRoom(token)){
 			return false;
 		}
@@ -209,17 +230,70 @@ public class Board {
 		if(Character.isUpperCase(symbol) || symbol == 'x' 
 				|| symbol == 'n' || symbol == 'e' || symbol == 's'){
 			return false;
-		} 
+		} */
 		return true;
 	}
 	
+	/**
+	 * Moves player one position up
+	 * @param player
+	 */
 	public void moveNorth(CharacterToken player) {
-		int xpos = player.getXPos();
-		int ypos = player.getYPos();
-		
+		Point newPos = new Point(player.getXPos(), player.getYPos()-1);
+		move(newPos, player);
 	}	
+	
+	/**
+	 * Moves player one position to the right
+	 * @param player
+	 */
+	public void moveEast(CharacterToken player){
+		Point newPos = new Point(player.getXPos()+1, player.getYPos());
+		move(newPos, player);
+	}
+	
+	/**
+	 * Moves player one position down
+	 * @param player
+	 */
 	public void moveSouth(CharacterToken player) {
-		
+		Point newPos = new Point(player.getXPos(), player.getYPos()+1);
+		move(newPos, player);
+	}
+	
+	/**
+	 * Moves player one position left
+	 * @param player
+	 */
+	public void moveWest(CharacterToken player) {
+		Point newPos = new Point(player.getXPos()-1, player.getYPos());
+		move(newPos, player);
+	}
+	
+	/**
+	 * Sets player's position within the token and the board.
+	 * @param newPos
+	 * @param player
+	 */
+	private void move(Point newPos, GameToken player){
+		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
+		// change player position
+		player.setXPos(newPos.x);
+		player.setYPos(newPos.y);
+		board[newPos.y][newPos.x].setToken(player);	// set player in new position on board
+	}
+	
+	/**
+	 * Moves player to a given position on the board.
+	 * @param newPos
+	 * @param player
+	 */
+	public void move(Position newPos, GameToken player){
+		move(new Point(newPos.getX(), newPos.getY()), player);
+	}
+	
+	public Tile getTile(int x, int y){
+		return board[y][x];
 	}
 	
 	/**
@@ -260,7 +334,29 @@ public class Board {
 			default:
 				throw new CluedoError("Error: tile character not recognised");
 		}
-		
+	}
+	
+	/**
+	 * Prints the state of the board from the 2D board array
+	 */
+	private void printBoard(){
+		System.out.println("\n ");
+		for(int i=0; i<board[0].length; i++){
+			for(int j=0; j<board.length; j++){
+				if(board[i][j] != null){
+					System.out.print(board[i][j].getSymbol());
+				} else {
+					System.out.print(" ");
+				}		
+			}
+			System.out.print("\n");
+		}
+		System.out.print("\n ");
+	}
+	
+	public String toString(){
+		this.printBoard();
+		return " ";
 	}
 
 }
