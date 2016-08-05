@@ -352,44 +352,6 @@ public class TextClient {
 	}
 	
 	/**
-	 * Moves a token to the same room as a given player.
-	 * @param player
-	 * @param token
-	 * @param crimeScene
-	 * @param board
-	 */
-	private static void moveCrimeTokens(CharacterToken player, GameToken token, RoomTile crimeScene){
-		Tile current = board.getTile(token.getXPos(), token.getYPos());
-		if(current != crimeScene){
-			Tile destination = nextTile(player.getXPos(), player.getYPos());
-			if(destination==null){
-				throw new CluedoError("Could not find space in the room for token");
-			}
-			board.move(destination.getPos(), token);
-		}
-	}
-	
-	/**
-	 * Finds a tile near the given coordinates.
-	 * @param board
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	private static Tile nextTile(int x, int y){
-		Tile destination = board.getTile(x, y);
-		for(int i = -2; i < 3; i++){
-			for(int j = -2; j < 3; j++){
-				if(x+i >= 0 && x+i < 25 && y+j>=0 && y+j < 25){
-					Tile tile = board.getTile(x, y);
-					if(tile.getToken()==null && tile.getClass() == destination.getClass())
-						return tile;
-				}
-			}
-		}
-		return null;
-	}
-	/**
 	 * Executes a given choice made by a player on their turn
 	 * @param choice
 	 * @param player
