@@ -2,7 +2,6 @@ package cluedo.board;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,7 +11,6 @@ import cluedo.control.CluedoGame.Room;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
 import cluedo.tokens.GameToken;
-import cluedo.tokens.WeaponToken;
 
 /**
  * Holds the tokens and logic for moving the tokens around the board.
@@ -339,13 +337,13 @@ public class Board {
 		switch(r.toString()){
 			case "KITCHEN" :
 				return 'K';
-			case "BALL_ROOM":
+			case "BALL ROOM":
 				return 'B';
 			case "CONSERVATORY":
 				return 'C';
-			case "DINING_ROOM":
+			case "DINING ROOM":
 				return 'N';
-			case "BILLIARD_ROOM":
+			case "BILLIARD ROOM":
 				return 'I';
 			case "LIBRARY":
 				return 'L';
@@ -354,9 +352,9 @@ public class Board {
 			case "HALL":
 				return 'H';
 			case "STUDY":
-				return 'L';
+				return 'S';
 			default:
-				return (Character) null;
+				return ' ';
 		}
 	}
 	

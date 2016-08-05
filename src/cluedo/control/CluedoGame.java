@@ -2,10 +2,8 @@ package cluedo.control;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import cluedo.board.Board;
 import cluedo.tokens.Card;

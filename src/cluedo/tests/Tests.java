@@ -9,6 +9,7 @@ import java.util.List;
 
 import cluedo.board.*;
 import cluedo.control.*;
+import cluedo.control.CluedoGame.Character;
 import cluedo.control.CluedoGame.Room;
 import cluedo.tokens.*;
 
@@ -18,6 +19,79 @@ import cluedo.tokens.*;
  *
  */
 public class Tests {
+	
+	@Test
+	public void testCharactersNotEmpty(){
+		CluedoGame game = newGame();
+		assertFalse(game.characters().isEmpty());
+	}
+	
+	@Test
+	public void testWeaponsNotEmpty(){
+		CluedoGame game = newGame();
+		assertFalse(game.weapons().isEmpty());
+	}
+	
+	@Test
+	public void testRoomsNotEmpty(){
+		CluedoGame game = newGame();
+		assertFalse(game.rooms().isEmpty());
+	}
+	
+	@Test
+	public void testNumCharacters(){
+		CluedoGame game = newGame();
+		assertEquals(6, game.characters().size());
+	}
+	
+	@Test
+	public void testNumWeapons(){
+		CluedoGame game = newGame();
+		assertEquals(6, game.weapons().size());
+	}
+	
+	@Test
+	public void testNumRooms(){
+		CluedoGame game = newGame();
+		assertEquals(9, game.rooms().size());
+	}
+
+	@Test
+	public void testCharacterCardName(){
+		CharacterToken chara = new CharacterToken("name", CluedoGame.Character.MISS_SCARLETT, true, 0);
+		assertTrue(chara.getName().equals("name"));
+		assertTrue(chara.getToken().toString().equals("MISS SCARLETT"));
+	}
+	
+	@Test
+	public void testPlayerHand(){
+		CluedoGame game = newGame();
+		assertNotNull(game.players().get(0).getHand());
+	}
+	
+	@Test
+	public void testCharacterNames(){
+		CluedoGame game = newGame();
+		List<CluedoGame.Character> characters = game.characters();
+		assertEquals(characters.get(0).toString(), "MISS SCARLETT");
+		assertEquals(characters.get(1).toString(), "COLONEL MUSTARD");
+		assertEquals(characters.get(2).toString(), "MRS WHITE");
+		assertEquals(characters.get(3).toString(), "THE REVEREND GREEN");
+		assertEquals(characters.get(4).toString(), "MRS PEACOCK");
+		assertEquals(characters.get(5).toString(), "PROFESSOR PLUM");
+	}
+	
+	@Test
+	public void testWeaponNames(){
+		CluedoGame game = newGame();
+		List<WeaponToken> weapons = game.weapons();
+		assertEquals(weapons.get(0).toString(), "CANDLESTICK");
+		assertEquals(weapons.get(1).toString(), "DAGGER");
+		assertEquals(weapons.get(2).toString(), "LEAD PIPE");
+		assertEquals(weapons.get(3).toString(), "REVOLVER");
+		assertEquals(weapons.get(4).toString(), "ROPE");
+		assertEquals(weapons.get(5).toString(), "SPANNER");
+	}
 	
 	@Test
 	public void testInvalidCharacterTokenEquals() {
@@ -87,14 +161,28 @@ public class Tests {
 	public void testRoomSymbols(){
 		Board board = newBoard(newGame());
 		assertEquals('K', board.getRoomSymbol(Room.KITCHEN));
-		assertEquals('b', board.getRoomSymbol(Room.BALL_ROOM));
+		assertEquals('B', board.getRoomSymbol(Room.BALL_ROOM));
 		assertEquals('C', board.getRoomSymbol(Room.CONSERVATORY));
-		//assertEquals('N', board.getRoomSymbol(Room.BILLIARD_ROOM));
-		//assertEquals('I', board.getRoomSymbol(Room.LIBRARY));
-		assertEquals('L', board.getRoomSymbol(Room.STUDY));
-		//assertEquals('O', board.getRoomSymbol(Room.HALL));
-		//assertEquals('H', board.getRoomSymbol(Room.LOUNGE));
-		//assertEquals('L', board.getRoomSymbol(Room.DINING_ROOM));
+		assertEquals('I', board.getRoomSymbol(Room.BILLIARD_ROOM));
+		assertEquals('L', board.getRoomSymbol(Room.LIBRARY));
+		assertEquals('S', board.getRoomSymbol(Room.STUDY));
+		assertEquals('H', board.getRoomSymbol(Room.HALL));
+		assertEquals('O', board.getRoomSymbol(Room.LOUNGE));
+		assertEquals('N', board.getRoomSymbol(Room.DINING_ROOM));
+	}
+	
+	@Test
+	public void testRoomNames(){
+		List<Room> all = getAllRooms();
+		assertTrue(all.contains(CluedoGame.Room.KITCHEN));
+		assertTrue(all.contains(CluedoGame.Room.BALL_ROOM));
+		assertTrue(all.contains(CluedoGame.Room.CONSERVATORY));
+		assertTrue(all.contains(CluedoGame.Room.BILLIARD_ROOM));
+		assertTrue(all.contains(CluedoGame.Room.LIBRARY));
+		assertTrue(all.contains(CluedoGame.Room.STUDY));
+		assertTrue(all.contains(CluedoGame.Room.HALL));
+		assertTrue(all.contains(CluedoGame.Room.LOUNGE));
+		assertTrue(all.contains(CluedoGame.Room.DINING_ROOM));
 	}
 
 	@Test

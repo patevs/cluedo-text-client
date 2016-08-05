@@ -12,10 +12,8 @@ import java.util.Set;
 
 import cluedo.board.Board;
 import cluedo.board.RoomTile;
-import cluedo.board.Tile;
 import cluedo.tokens.Card;
 import cluedo.tokens.CharacterToken;
-import cluedo.tokens.GameToken;
 import cluedo.tokens.WeaponToken;
 
 
@@ -579,7 +577,7 @@ public class TextClient {
 			
 		// create a new cluedo game
 		game = new CluedoGame(nplayers, players, boardName);
-		board = game.board();
+		board = CluedoGame.board();
 		
 		System.out.println("\nCards have been dealt, the game begins!");
 		// print out any unused cards
@@ -649,7 +647,7 @@ public class TextClient {
 	 * @param game
 	 */
 	public CluedoGame game() {
-		return this.game;
+		return TextClient.game;
 	}
 	
 	/**
@@ -657,6 +655,6 @@ public class TextClient {
 	 * @param game
 	 */
 	public Board board(){
-		return this.board;
+		return TextClient.board;
 	}
 }
