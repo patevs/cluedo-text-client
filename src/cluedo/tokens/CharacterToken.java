@@ -19,6 +19,7 @@ public class CharacterToken extends GameToken{
 	private CluedoGame.Character token; // character in game
 	private boolean isPlayer;
 	private int uid; // unique id of player
+	private boolean hasSuggested = false;
 	
 	private List<Card> hand = new ArrayList<Card>(); // represents the players hand of cards  
 	
@@ -63,6 +64,13 @@ public class CharacterToken extends GameToken{
 	
 	public void isPlayer(boolean active){
 		this.isPlayer = active;
+	}
+	
+	public boolean hasSuggested(){
+		return hasSuggested;
+	}
+	public void suggested(boolean s){
+		hasSuggested = s;
 	}
 	
 	/**

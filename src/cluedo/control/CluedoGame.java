@@ -46,16 +46,6 @@ public class CluedoGame {
 		dealCards();
 	}
 
-	private static List<Character> getCharacters() {
-		List<Character> characters = new ArrayList<Character>();
-		// iterate over each weapon and add each one to the list
-		for(Character c: Character.values()){
-			characters.add(c);
-		}
-		// return the list of all weapons
-		return characters;
-	}
-
 	/**
 	 * Get the number of players in the game
 	 * @return num of players
@@ -153,6 +143,17 @@ public class CluedoGame {
 		}
 		return false;
 	}
+	
+	private static List<Character> getCharacters() {
+		List<Character> characters = new ArrayList<Character>();
+		// iterate over each weapon and add each one to the list
+		for(Character c: Character.values()){
+			characters.add(c);
+		}
+		// return the list of all weapons
+		return characters;
+	}
+	
 	/**
 	 * Returns the character token with the given name.
 	 * @param name
@@ -209,6 +210,19 @@ public class CluedoGame {
 		}
 		// return the list of all rooms
 		return rooms;
+	}
+	
+	/**
+	 * Returns a room card which name matches a string
+	 * 	or null if no match.
+	 */
+	public static Room getRoom(String name){
+		for(Room room : getRooms()){
+			if(room.toString().equalsIgnoreCase(name)){
+				return room;
+			}
+		}
+		return null; // room not found
 	}
 	
 	/**

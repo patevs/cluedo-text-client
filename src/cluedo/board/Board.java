@@ -361,7 +361,6 @@ public class Board {
 	 * Prints the state of the board from the 2D board array
 	 */
 	private void printBoard(){
-		System.out.println("\n ");
 		for(int i=0; i<board[0].length; i++){
 			for(int j=0; j<board.length; j++){
 				if(board[i][j] != null){
