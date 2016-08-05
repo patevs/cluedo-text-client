@@ -62,13 +62,26 @@ public class CharacterToken extends GameToken{
 		return isPlayer;
 	}
 	
+	/**
+	 * Returns false if is a spare character.
+	 * @param active
+	 */
 	public void isPlayer(boolean active){
 		this.isPlayer = active;
 	}
 	
+	/**
+	 * Returns true if already made a suggestion in given room.
+	 * @return
+	 */
 	public boolean hasSuggested(){
 		return hasSuggested;
 	}
+	
+	/**
+	 * Sets whether player has made a suggestion.
+	 * @param s
+	 */
 	public void suggested(boolean s){
 		hasSuggested = s;
 	}
