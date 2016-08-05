@@ -107,7 +107,7 @@ public class TextClient {
 			String token = inputString("Player #" + i + " token?").toLowerCase();
 			System.out.println();
 			// retry if the player enters an invalid token
-			if (!tokens.contains(token)) {
+			while (!tokens.contains(token)) {
 				listTokens(tokens, "Invalid token! Must be one of: ");
 				token = inputString("Player #" + i + " token?").toLowerCase();
 			}

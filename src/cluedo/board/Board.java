@@ -408,6 +408,8 @@ public class Board {
 			}
 			System.out.print("\n");
 		}
+		System.out.println("\n");
+		System.out.println("\n");
 	}
 	
 	public String toString(){
