@@ -211,7 +211,7 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	private static boolean checkAccusation(Card[] results){
+	public static boolean checkAccusation(Card[] results){
 		Card[] solution = game.Solution();
 
 		// checks each card by name
@@ -637,5 +637,19 @@ public class TextClient {
 				endTurn = false; // reset for next player
 			}
 		}
+	}
+
+	public void setGame(CluedoGame game) {
+		this.game = game;
+	}
+
+	public void setBoard(Board board) {
+		this.board = board;
+	}
+	public CluedoGame game() {
+		return this.game;
+	}
+	public Board board(){
+		return this.board;
 	}
 }

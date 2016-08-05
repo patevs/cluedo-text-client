@@ -257,7 +257,7 @@ public class Board {
 	 * @param newPos
 	 * @param player
 	 */
-	private void move(Point newPos, GameToken player){
+	public void move(Point newPos, GameToken player){
 		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
 		// change player position
 		player.setXPos(newPos.x);
