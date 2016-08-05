@@ -67,7 +67,7 @@ public class Tests {
 		assertEquals(game.rooms().size(), 9);
 	}
 	
-	/*
+
 	@Test
 	public void testPlayerPosition(){
 		TextClient client = cluedoGame();
@@ -84,7 +84,7 @@ public class Tests {
 		RoomTile pOneTile = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
 		RoomTile pTwoTile = (RoomTile)(board.getTile(othPlayer.getXPos(), othPlayer.getYPos()));
 		assertEquals(pOneTile.name().toString(), pTwoTile.name().toString());
-	}*/
+	}
 	
 	//================//
 	// HELPER METHODS //

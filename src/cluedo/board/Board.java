@@ -279,14 +279,18 @@ public class Board {
 	}
 	
 	public void moveIntoRoom(GameToken token, Room r) {
-		char symbol = getRoomSymbol(r);
+		//char symbol = getRoomSymbol(r);
 		for(int i=0; i<board[0].length; i++){
 			for(int j=0; j<board.length; j++){
 				Tile t = board[i][j];
-				if(t.getSymbol() == symbol && t.getToken() == null){
-					token.setXPos(j);
-					token.setYPos(i);
-					t.setToken(token);
+				//if(t.getSymbol() == symbol && t.getToken() == null){
+				if(t instanceof RoomTile){
+					RoomTile rTile = (RoomTile)t;
+					if(rTile.name() == r && t.getToken() == null){
+						token.setXPos(j);
+						token.setYPos(i);
+						t.setToken(token);
+					}
 				}		
 			}
 		}
