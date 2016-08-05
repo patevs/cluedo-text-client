@@ -290,13 +290,14 @@ public class Board {
 						token.setXPos(j);
 						token.setYPos(i);
 						t.setToken(token);
+						return; // moved character into room
 					}
 				}		
 			}
 		}
 	}
 
-	private char getRoomSymbol(Room r) {
+	public char getRoomSymbol(Room r) {
 		switch(r.toString()){
 			case "KITCHEN" :
 				return 'K';

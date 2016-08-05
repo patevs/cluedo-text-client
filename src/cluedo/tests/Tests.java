@@ -55,9 +55,25 @@ public class Tests {
 		CluedoGame game = client.game();
 		Board board = client.board();
 		Card[] solution= game.Solution();
-		
-		assertFalse(solution==null);
 		assertTrue(client.checkAccusation(solution));
+	}
+	
+	@Test
+	public void testInvalidAccusation(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		Card[] solution= game.Solution();
+		Card[] guess = solution.clone();
+		// change the room so the guess is wrong
+		List<Room> rooms = getAllRooms();
+		for(Room r: rooms){
+			if(!(r.name().equals(solution[1].toString()))){
+					guess[1] = r;
+					break;
+			}
+		}
+		assertFalse(client.checkAccusation(guess));
 	}
 	
 	@Test
@@ -67,6 +83,19 @@ public class Tests {
 		assertEquals(game.rooms().size(), 9);
 	}
 	
+	@Test
+	public void testRoomSymbols(){
+		Board board = newBoard(newGame());
+		assertEquals('K', board.getRoomSymbol(Room.KITCHEN));
+		assertEquals('b', board.getRoomSymbol(Room.BALL_ROOM));
+		assertEquals('C', board.getRoomSymbol(Room.CONSERVATORY));
+		//assertEquals('N', board.getRoomSymbol(Room.BILLIARD_ROOM));
+		//assertEquals('I', board.getRoomSymbol(Room.LIBRARY));
+		assertEquals('L', board.getRoomSymbol(Room.STUDY));
+		//assertEquals('O', board.getRoomSymbol(Room.HALL));
+		//assertEquals('H', board.getRoomSymbol(Room.LOUNGE));
+		//assertEquals('L', board.getRoomSymbol(Room.DINING_ROOM));
+	}
 
 	@Test
 	public void testPlayerPosition(){

@@ -216,7 +216,7 @@ public class TextClient {
 
 		// checks each card by name
 		for(int i = 0; i < 3; i++){
-			if(!((results[i].toString()).equals(solution[i].toString()))){
+			if(!(results[i].toString().equals(solution[i].toString()))){
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
 				System.out.println("|Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e|");
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
@@ -244,11 +244,17 @@ public class TextClient {
 		Card[] result = new Card[3];
 		
 		// Gets the suspect
-		result[0] = (Card)getSuspect();
+		CharacterToken suspect = getSuspect();
+		result[0] = suspect.getToken();
+		
 		// get the room
 		result[1] = (Card)CluedoGame.getRoom(crimeScene.name().toString());
 		
-		result[2] = (Card)getWeapon();
+		WeaponToken weapon = getWeapon();
+		result[2] = (Card)weapon;
+		
+		board.moveIntoRoom(suspect, crimeScene.name());
+		board.moveIntoRoom(weapon, crimeScene.name());
 				
 		System.out.println("You suggest the crime was committed in the " + result[1] +
 				" by " + result[0].toString() + " with the " + result[2].toString());
@@ -326,21 +332,21 @@ public class TextClient {
 	 * Asks player for the suspect.
 	 * @return
 	 */
-	private static CluedoGame.Character getSuspect(){
+	private static CharacterToken getSuspect(){
 		// set up the tokens
-		ArrayList<CluedoGame.Character> suspects = new ArrayList<CluedoGame.Character>();
+		ArrayList<CharacterToken> suspects = new ArrayList<CharacterToken>();
 		
 		// adding all characters to the suspects list
 		System.out.print("Suspects: ");
 		int count = 1;
-		for(CluedoGame.Character c : CluedoGame.characters()){
-			System.out.print(count + ") " + toCamelCase(c.toString()) + " ");
+		for(CharacterToken c : game.players()){
+			System.out.print(count + ") " + toCamelCase(c.getToken().toString()) + " ");
 			suspects.add(c);
 			count++;
 		}
 		
 		// retry if the player enters an invalid token
-		CluedoGame.Character suspect = suspects.get(inputNumber("\n Suggest a murderer: (num)", 1, suspects.size()) - 1);
+		CharacterToken suspect = suspects.get(inputNumber("\n Suggest a murderer: (num)", 1, suspects.size()) - 1);
 		return suspect;
 	}
 	
@@ -437,6 +443,7 @@ public class TextClient {
 				break;
 			case "End turn.":
 				player.setRemainingSteps(0);
+				endTurn = true;
 				break;
 			default:
 				throw new CluedoError("Error: Choice not recognised");
@@ -628,10 +635,11 @@ public class TextClient {
 				int roll = die.nextInt(6) + 1;
 				player.setRemainingSteps(roll);
 				board.toString(); // print the board
+				System.out.println("\n");
 				// print players roll
 				System.out.print("(player " + player.getUid() + ": " + player.getToken() + ") rolls a " + roll);
 				player.suggested(false); // resets players suggestion field
-				while(player.getRemainingSteps() > 0 && !endTurn){
+				while(player.getRemainingSteps() >= 0 && !endTurn){
 					executeChoice(getPlayerChoice(player), player);
 				}
 				endTurn = false; // reset for next player
