@@ -1,6 +1,10 @@
 package cluedo.board;
 
+import java.awt.Point;
+
+import cluedo.control.CluedoError;
 import cluedo.control.CluedoGame;
+import cluedo.control.CluedoGame.Room;
 
 /**
  * A room tile on the game board, which can hold a maximum of one game token.
@@ -27,6 +31,34 @@ public class RoomTile extends Tile{
 	 */
 	public CluedoGame.Room name(){
 		return name;
+	}
+	
+	/**
+	 * Returns whether this room is a corner room.
+	 * @return
+	 */
+	public boolean isCornerRoom(){
+		if(name.equals(CluedoGame.Room.KITCHEN)||name.equals(CluedoGame.Room.CONSERVATORY)||
+				name.equals(CluedoGame.Room.LOUNGE)||name.equals(CluedoGame.Room.STUDY))
+			return true;
+		return false;
+	}
+	
+	public CluedoGame.Room oppositeRoomPos(){
+		if(!isCornerRoom())
+			return null;
+		switch(this.name().toString()){
+		case "Kitchen":
+			return CluedoGame.Room.STUDY;
+		case "Study":
+			return CluedoGame.Room.KITCHEN;
+		case "Conservatory":
+			return CluedoGame.Room.LOUNGE;
+		case "Lounge":
+			return CluedoGame.Room.CONSERVATORY;
+		default:
+			throw new CluedoError("Could not find opposite corner room.");
+		}
 	}
 	
 	@Override

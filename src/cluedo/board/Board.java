@@ -85,6 +85,23 @@ public class Board {
 	}
 	
 	/**
+	 * Returns true if a given token is in a corner room
+	 * @param token
+	 * @return
+	 */
+	public boolean inCornerRoom(GameToken token){
+		int Xpos = token.getXPos();
+		int Ypos = token.getYPos();
+		Tile t = board[Ypos][Xpos];
+		if(t instanceof RoomTile){
+			RoomTile r = (RoomTile)t;
+			if(r.isCornerRoom())
+				return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns true if a given token is in any doorway
 	 * @param token
 	 * @return
@@ -250,6 +267,21 @@ public class Board {
 	public void moveWest(CharacterToken player) {
 		Point newPos = new Point(player.getXPos()-1, player.getYPos());
 		move(newPos, player);
+	}
+	
+	/**
+	 * Moves player to opposite room.
+	 * @param player
+	 */
+	public void useStairs(CharacterToken player){
+		Tile tile = getTile(player.getXPos(), player.getYPos());
+		if(tile instanceof RoomTile){
+			RoomTile rTile = (RoomTile)tile;
+			if(rTile.isCornerRoom()){
+				CluedoGame.Room opposite = rTile.oppositeRoomPos();
+				moveIntoRoom(player, opposite);
+			}
+		}
 	}
 	
 	/**

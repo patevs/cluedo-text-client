@@ -32,6 +32,7 @@ public class TextClient {
 	private static Board board;
 	private static boolean endTurn = false; // ends the turn after making an accusation or false suggestion
 	private static boolean gameWon = false;
+	private static boolean canUseStairs = false; // makes sure player can only use stairs at start of turn
 	
 	public TextClient() {
 		
@@ -419,6 +420,9 @@ public class TextClient {
 			case "Look at hand.":
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
+			case "Use stairs.":
+				board.useStairs(player);
+				break;
 			case "Make suggestion.":
 				player.suggested(true);
 				if(checkSuggestion(makeSuggestion(player))) // if refuted, player's turn ends
@@ -448,6 +452,7 @@ public class TextClient {
 			default:
 				throw new CluedoError("Error: Choice not recognised");
 		}
+		canUseStairs = false;
 	}
 
 	/**
@@ -490,8 +495,12 @@ public class TextClient {
 				options.add("Move West.");
 			}
 		}
-		if(board.inRoom(player) && !player.hasSuggested()){
-			options.add("Make suggestion.");
+		if(board.inRoom(player)){
+			if(board.inCornerRoom(player) && canUseStairs)
+				options.add("Use stairs.");
+			if(!player.hasSuggested()){
+				options.add("Make suggestion.");
+			}
 		}
 		options.add("Make accusation.");
 		options.add("Look at hand.");
@@ -643,6 +652,11 @@ public class TextClient {
 					executeChoice(getPlayerChoice(player), player);
 				}
 				endTurn = false; // reset for next player
+				canUseStairs = true;
+				System.out.println("\n");
+				System.out.println("\n");
+				System.out.println("\n");
+				System.out.println("\n");
 			}
 		}
 	}
