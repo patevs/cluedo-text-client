@@ -48,16 +48,16 @@ public class RoomTile extends Tile{
 		if(!isCornerRoom())
 			return null;
 		switch(this.name().toString()){
-		case "Kitchen":
-			return CluedoGame.Room.STUDY;
-		case "Study":
-			return CluedoGame.Room.KITCHEN;
-		case "Conservatory":
-			return CluedoGame.Room.LOUNGE;
-		case "Lounge":
-			return CluedoGame.Room.CONSERVATORY;
-		default:
-			throw new CluedoError("Could not find opposite corner room.");
+			case "KITCHEN":
+				return CluedoGame.Room.STUDY;
+			case "STUDY":
+				return CluedoGame.Room.KITCHEN;
+			case "CONSERVATORY":
+				return CluedoGame.Room.LOUNGE;
+			case "LOUNGE":
+				return CluedoGame.Room.CONSERVATORY;
+			default:
+				throw new CluedoError("Could not find opposite corner room.");
 		}
 	}
 	

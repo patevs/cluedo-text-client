@@ -279,6 +279,8 @@ public class Board {
 			RoomTile rTile = (RoomTile)tile;
 			if(rTile.isCornerRoom()){
 				CluedoGame.Room opposite = rTile.oppositeRoomPos();
+				System.out.println("Corner room: " + rTile.name());
+				System.out.println("Opposite room: " + opposite);
 				moveIntoRoom(player, opposite);
 			}
 		}
@@ -319,9 +321,13 @@ public class Board {
 				if(t instanceof RoomTile){
 					RoomTile rTile = (RoomTile)t;
 					if(rTile.name() == r && t.getToken() == null){
-						token.setXPos(j);
-						token.setYPos(i);
-						t.setToken(token);
+						move(new Point(j, i), token);
+//						// remove from original tile
+//						// set token's new position
+//						token.setXPos(j);
+//						token.setYPos(i);
+//						// add token to new position
+//						t.setToken(token);
 						return; // moved character into room
 					}
 				}		

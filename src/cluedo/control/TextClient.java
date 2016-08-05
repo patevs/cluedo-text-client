@@ -195,9 +195,9 @@ public class TextClient {
 		Card[] result = new Card[3];
 		
 		// Gets the suspect
-		result[0] = (Card)getSuspect();
+		result[0] = getSuspect().getToken();
 		result[1] = (Card)getCrimeScene();
-		result[2] = (Card)getWeapon();
+		result[2] = getWeapon().token();
 
 		System.out.println("You accuse " + result[0].toString() + " of committing the crime in the " + result[1].toString() +
 				" with the " + result[2].toString());
@@ -422,6 +422,7 @@ public class TextClient {
 				break;
 			case "Use stairs.":
 				board.useStairs(player);
+				player.setRemainingSteps(0);
 				break;
 			case "Make suggestion.":
 				player.suggested(true);
