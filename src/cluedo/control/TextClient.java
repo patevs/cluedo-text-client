@@ -624,16 +624,38 @@ public class TextClient {
 		}
 	}
 
-	public void setGame(CluedoGame game) {
-		this.game = game;
+	//============================//
+	// Helper methods for testing //
+	//============================//
+	
+	/**
+	 * Associates this text client with a game.
+	 * @param game
+	 */
+	public void setGame(CluedoGame newGame) {
+		game = newGame;
+	}
+	
+	/**
+	 * Associates this text client with a board.
+	 * @param game
+	 */
+	public void setBoard(Board newBoard) {
+		board = newBoard;
 	}
 
-	public void setBoard(Board board) {
-		this.board = board;
-	}
+	/**
+	 * Returns the game associated with this text client.
+	 * @param game
+	 */
 	public CluedoGame game() {
 		return this.game;
 	}
+	
+	/**
+	 * Returns the board associated with this text client.
+	 * @param game
+	 */
 	public Board board(){
 		return this.board;
 	}
