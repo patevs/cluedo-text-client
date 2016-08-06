@@ -35,6 +35,8 @@ public class Board {
 	 * @param boardFile
 	 */
 	public Board(CluedoGame game, String boardFile) {
+		if(game==null||boardFile==null|boardFile.length()<1)
+			throw new CluedoError("Invalid board arguments");
 		this.numPlayers = game.numPlayers();
 		this.activePlayers = game.players();
 		this.solution = game.Solution();
@@ -81,6 +83,8 @@ public class Board {
 	 * @return
 	 */
 	public boolean inRoom(GameToken token){
+		if(token==null)
+			return false;
 		int Xpos = token.getXPos();
 		int Ypos = token.getYPos();
 		Tile t = board[Ypos][Xpos];
@@ -93,6 +97,8 @@ public class Board {
 	 * @return
 	 */
 	public boolean inCornerRoom(GameToken token){
+		if(token==null)
+			return false;
 		int Xpos = token.getXPos();
 		int Ypos = token.getYPos();
 		Tile t = board[Ypos][Xpos];
@@ -110,6 +116,8 @@ public class Board {
 	 * @return
 	 */
 	public boolean inDoorway(GameToken token){
+		if(token==null)
+			return false;
 		int Xpos = token.getXPos();
 		int Ypos = token.getYPos();
 		Tile t = board[Ypos][Xpos];
@@ -122,6 +130,8 @@ public class Board {
 	 * @return
 	 */
 	public boolean canMoveNorth(CharacterToken token){	
+		if(token==null)
+			return false;
 		// already in north most square
 		if(token.getYPos() - 1 < 0){
 			return false;
@@ -153,6 +163,8 @@ public class Board {
 	 * @return
 	 */
 	public boolean canMoveEast(CharacterToken token){	
+		if(token==null)
+			return false;
 		// already in east most square
 		if(token.getXPos() + 1 >= width){
 			return false;
@@ -183,7 +195,9 @@ public class Board {
 	 * @param token
 	 * @return
 	 */
-	public boolean canMoveSouth(CharacterToken token){	
+	public boolean canMoveSouth(CharacterToken token){
+		if(token==null)
+			return false;	
 		// already in south most square
 		if(token.getYPos() + 1 >= height){
 			return false;
@@ -215,6 +229,8 @@ public class Board {
 	 * @return
 	 */
 	public boolean canMoveWest(CharacterToken token){	
+		if(token==null)
+			return false;
 		// already in west most square
 		if(token.getXPos() - 1 < 0){
 			return false;
@@ -245,6 +261,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveNorth(CharacterToken player) {
+		if(player==null)
+			return;
 		Point newPos = new Point(player.getXPos(), player.getYPos()-1);
 		move(newPos, player);
 	}	
@@ -254,6 +272,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveEast(CharacterToken player){
+		if(player==null)
+			return;
 		Point newPos = new Point(player.getXPos()+1, player.getYPos());
 		move(newPos, player);
 	}
@@ -263,6 +283,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveSouth(CharacterToken player) {
+		if(player==null)
+			return;
 		Point newPos = new Point(player.getXPos(), player.getYPos()+1);
 		move(newPos, player);
 	}
@@ -272,6 +294,8 @@ public class Board {
 	 * @param player
 	 */
 	public void moveWest(CharacterToken player) {
+		if(player==null)
+			return;
 		Point newPos = new Point(player.getXPos()-1, player.getYPos());
 		move(newPos, player);
 	}
@@ -281,6 +305,8 @@ public class Board {
 	 * @param player
 	 */
 	public void useStairs(CharacterToken player){
+		if(player==null)
+			return;
 		// checks player is in a corner room
 		Tile tile = getTile(player.getXPos(), player.getYPos());
 		if(!(tile instanceof RoomTile))
@@ -299,6 +325,9 @@ public class Board {
 	 * @param player
 	 */
 	public void move(Point newPos, GameToken player){
+		if(newPos == null || newPos.x < 0 || newPos.x > 24 ||
+				newPos.y < 0 || newPos.y > 24 || player==null)
+			return;
 		// set original pos to null
 		board[player.getYPos()][player.getXPos()].setToken(null);	
 		// change player position
@@ -314,6 +343,9 @@ public class Board {
 	 * @param player
 	 */
 	public void move(Position newPos, GameToken player){
+		if(newPos == null || newPos.getX() < 0 || newPos.getX() > 24 ||
+				newPos.getY() < 0 || newPos.getY() > 24 || player==null)
+			return;
 		move(new Point(newPos.getX(), newPos.getY()), player);
 	}
 	
@@ -324,6 +356,8 @@ public class Board {
 	 * @return
 	 */
 	public Tile getTile(int x, int y){
+		if(x<0 || x>24||y<0||y>24)
+			return null;
 		return board[y][x];
 	}
 	
@@ -353,6 +387,8 @@ public class Board {
 	 * @return
 	 */
 	public char getRoomSymbol(Room r) {
+		if(r==null)
+			return ' ';
 		switch(r.toString()){
 			case "KITCHEN" :
 				return 'K';
@@ -384,6 +420,9 @@ public class Board {
 	 * @return tile
 	 */
 	private Tile getTile(char c, Position p) {
+		if(c==' ' || p == null || p.getX() < 0 || p.getX() > 24 ||
+				p.getY() < 0 || p.getY() > 24)
+			return null;
 		switch(c){
 			case 'x':
 				return new WallTile(p);

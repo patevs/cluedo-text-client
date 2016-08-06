@@ -297,7 +297,40 @@ public class Tests {
 		Board board = client.board();
 		CharacterToken player = game.players().get(5); 
 		int originalY = player.getYPos();
-		assertFalse(board.canMoveSouth(player)); // player cannot go through a wall
+		assertFalse(board.canMoveSouth(player)); // player cannot go out of board
+	}
+	
+	@Test
+	public void testInvalidCanMove_1(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(0);
+		board.move(new Point(24, 24), player);
+//		board.printBoard();
+		assertFalse(board.canMoveEast(player)); // player cannot go off board
+	}
+	
+	@Test
+	public void testInvalidCanMove_2(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(0);
+		board.move(new Point(18,4), player);
+//		board.printBoard();
+		assertFalse(board.canMoveEast(player)); // player cannot enter room through side of door
+	}
+	
+	@Test
+	public void testInvalidCanMove_3(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(0);
+		board.move(new Point(17,4), player);
+//		board.printBoard();
+		assertFalse(board.canMoveWest(player)); // player cannot enter room through wall
 	}
 	
 	//====================================================================================//
