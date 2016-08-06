@@ -38,6 +38,8 @@ public class CluedoGame {
 	 * @param boardFile
 	 */
 	public CluedoGame(int nPlayers, List<CharacterToken> players, String boardFile) {
+		if(boardFile==null|boardFile.length()<1)
+			throw new CluedoError("Invalid board arguments");
 		this.numberOfPlayers = nPlayers;
 		this.activePlayers = players;
 		CluedoGame.characters = getCharacters();

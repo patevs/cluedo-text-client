@@ -200,8 +200,8 @@ public class Tests {
 		board.move(getRoomPos(), player);
 		//System.out.println(player.getXPos() + ", " + player.getYPos());
 		board.moveIntoRoom(othPlayer, getRoom());
-		System.out.println(player.getXPos() + ", " + player.getYPos());
-		System.out.println(othPlayer.getXPos() + ", " + othPlayer.getYPos());
+//		System.out.println(player.getXPos() + ", " + player.getYPos());
+//		System.out.println(othPlayer.getXPos() + ", " + othPlayer.getYPos());
 		RoomTile pOneTile = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
 		RoomTile pTwoTile = (RoomTile)(board.getTile(othPlayer.getXPos(), othPlayer.getYPos()));
 		assertEquals(pOneTile.name().toString(), pTwoTile.name().toString());
@@ -285,9 +285,35 @@ public class Tests {
 		TextClient client = cluedoGame();
 		CluedoGame game = client.game();
 		Board board = client.board();
+		CharacterToken player = game.players().get(4); 
+		assertTrue(board.canMoveNorth(player)); // player can move north into hall
+	}
+	
+	@Test
+	public void testValidCanMove_1(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(5); 
+		assertTrue(board.canMoveEast(player)); // player can move east into hall
+	}
+	
+	@Test
+	public void testValidCanMove_2(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
 		CharacterToken player = game.players().get(0); 
-		int originalY = player.getYPos();
-		assertTrue(board.canMoveSouth(player)); // player can move into hall
+		assertTrue(board.canMoveSouth(player)); // player can move south into hall
+	}
+	
+	@Test
+	public void testValidCanMove_3(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(3); 
+		assertTrue(board.canMoveWest(player)); // player can move west into hall
 	}
 	
 	@Test

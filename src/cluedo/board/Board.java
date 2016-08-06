@@ -206,7 +206,10 @@ public class Board {
 		// cannot move if south is a room, invalid tile, or entrance which is not south
 		int xpos = token.getXPos();
 		int ypos = token.getYPos();
-		Tile t = board[ypos+1][xpos];
+//		Tile t = board[ypos+1][xpos];
+		Tile t = getTile(xpos,ypos+1);
+		if(t==null)
+			return false;
 		char symbol = t.getSymbol();
 		// cannot move if next tile already contains a token
 		if(t.getToken()!=null){ 
@@ -337,17 +340,18 @@ public class Board {
 		board[newPos.y][newPos.x].setToken(player);	
 	}
 	
-	/**
-	 * Moves player to a given position on the board.
-	 * @param newPos
-	 * @param player
-	 */
-	public void move(Position newPos, GameToken player){
-		if(newPos == null || newPos.getX() < 0 || newPos.getX() > 24 ||
-				newPos.getY() < 0 || newPos.getY() > 24 || player==null)
-			return;
-		move(new Point(newPos.getX(), newPos.getY()), player);
-	}
+//	Unused method	
+//	/**
+//	 * Moves player to a given position on the board.
+//	 * @param newPos
+//	 * @param player
+//	 */
+//	public void move(Position newPos, GameToken player){
+//		if(newPos == null || newPos.getX() < 0 || newPos.getX() > 24 ||
+//				newPos.getY() < 0 || newPos.getY() > 24 || player==null)
+//			return;
+//		move(new Point(newPos.getX(), newPos.getY()), player);
+//	}
 	
 	/**
 	 * Returns the tile at the specified position
@@ -387,8 +391,6 @@ public class Board {
 	 * @return
 	 */
 	public char getRoomSymbol(Room r) {
-		if(r==null)
-			return ' ';
 		switch(r.toString()){
 			case "KITCHEN" :
 				return 'K';
@@ -420,9 +422,6 @@ public class Board {
 	 * @return tile
 	 */
 	private Tile getTile(char c, Position p) {
-		if(c==' ' || p == null || p.getX() < 0 || p.getX() > 24 ||
-				p.getY() < 0 || p.getY() > 24)
-			return null;
 		switch(c){
 			case 'x':
 				return new WallTile(p);
