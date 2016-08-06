@@ -249,7 +249,7 @@ public class CluedoGame {
 	 * Deals the cards evenly to all player leaving out left over cards
 	 */
 	private void dealCards() {
-		// remove unused cards from deck so remaining cards can be delt evenly
+		// remove unused cards from deck so remaining cards can be dealt evenly
 		int numUnused = deck.size() % numPlayers();
 		unusedCards = new ArrayList<Card>();
 		for(int i=0; i<numUnused; i++){

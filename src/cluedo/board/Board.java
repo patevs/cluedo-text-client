@@ -328,6 +328,8 @@ public class Board {
 	}
 	
 	public void moveIntoRoom(GameToken token, Room r) {
+		if(r == null || token == null)
+			throw new CluedoError("Null parameters: moveIntoRoom()");
 		// finds a tile in the given room
 		for(int i=0; i<board[0].length; i++){
 			for(int j=0; j<board.length; j++){
@@ -418,7 +420,7 @@ public class Board {
 	/**
 	 * Prints the state of the board from the 2D board array
 	 */
-	private void printBoard(){
+	public void printBoard(){
 		for(int i=0; i<board[0].length; i++){
 			for(int j=0; j<board.length; j++){
 				if(board[i][j] != null){
@@ -429,8 +431,6 @@ public class Board {
 			}
 			System.out.print("\n");
 		}
-		System.out.println();
-		System.out.println();
 	}
 	
 	@Override

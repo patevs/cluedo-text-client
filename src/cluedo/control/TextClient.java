@@ -213,7 +213,7 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	public static boolean checkAccusation(Card[] results){
+	public static boolean checkAccusation(Card[] results, CharacterToken player){
 		Card[] solution = game.Solution();
 
 		// checks each card by name
@@ -223,6 +223,7 @@ public class TextClient {
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
 				System.out.println("|Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e|");
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
+				player.isPlayer(false);
 				return false;
 			}
 		}
@@ -401,8 +402,7 @@ public class TextClient {
 				player.suggested(true); // player cannot suggest again without leaving room
 				break;
 			case "Make accusation.":
-				if(!checkAccusation(makeAccusation(player))){
-					player.isPlayer(false);
+				if(!checkAccusation(makeAccusation(player), player)){
 					// displays game end message if all players have lost
 					if(!game.activePlayers()){
 						viewGameEnd(player);

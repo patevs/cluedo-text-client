@@ -1,9 +1,15 @@
 package cluedo.tests;
 
 import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.Point;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +25,36 @@ import cluedo.tokens.*;
  *
  */
 public class Tests {
+
+	// from http://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
+	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	
+	//====================================================================================//
+	//                                  EQUIPMENT TESTS                                   //
+	//====================================================================================//
+		
 	@Test
 	public void testCharactersNotEmpty(){
 		CluedoGame game = newGame();
 		assertFalse(game.characters().isEmpty());
 	}
+	
+	@Test
+	public void testDeckEmpty(){
+		TextClient client = smallCluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		assertTrue(game.deck().size()==0); // all cards dealt to players
+		for(CharacterToken player: game.players()){
+			if(player.isPlayer())
+				assertEquals(4, player.getHand().size());
+			else
+				assertEquals(0, player.getHand().size());
+		}
+		assertEquals(2, game.unusedCards().size());
+	}
+	
 	
 	@Test
 	public void testWeaponsNotEmpty(){
@@ -122,39 +152,11 @@ public class Tests {
 	}
 	
 	@Test
-	public void activePlayer(){
-		TextClient client = new TextClient();
-		CluedoGame game = newGame();
-		client.setGame(game);
-		client.setBoard(game.board());
+	public void activePlayers(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
 		assertEquals(game.players(), game.board().players());
-	}
-	
-	@Test
-	public void testValidAccusation(){
-		TextClient client = cluedoGame();
-		CluedoGame game = client.game();
-		Board board = client.board();
-		Card[] solution= game.Solution();
-		assertTrue(client.checkAccusation(solution));
-	}
-	
-	@Test
-	public void testInvalidAccusation(){
-		TextClient client = cluedoGame();
-		CluedoGame game = client.game();
-		Board board = client.board();
-		Card[] solution= game.Solution();
-		Card[] guess = solution.clone();
-		// change the room so the guess is wrong
-		List<Room> rooms = getAllRooms();
-		for(Room r: rooms){
-			if(!(r.name().equals(solution[1].toString()))){
-					guess[1] = r;
-					break;
-			}
-		}
-		assertFalse(client.checkAccusation(guess));
 	}
 	
 	@Test
@@ -191,9 +193,13 @@ public class Tests {
 		assertTrue(all.contains(CluedoGame.Room.LOUNGE));
 		assertTrue(all.contains(CluedoGame.Room.DINING_ROOM));
 	}
+	
+	//====================================================================================//
+	//                                      MOVE TESTS                                    //
+	//====================================================================================//
 
 	@Test
-	public void testPlayerPosition(){
+	public void testValidMove(){
 		TextClient client = cluedoGame();
 		CluedoGame game = client.game();
 		Board board = client.board();
@@ -202,17 +208,240 @@ public class Tests {
 		CharacterToken othPlayer = getOtherPlayer();
 		board.move(getRoomPos(), player);
 		//System.out.println(player.getXPos() + ", " + player.getYPos());
-		board.moveIntoRoom(othPlayer, CluedoGame.Room.BALL_ROOM);
+		board.moveIntoRoom(othPlayer, getRoom());
 		System.out.println(player.getXPos() + ", " + player.getYPos());
 		System.out.println(othPlayer.getXPos() + ", " + othPlayer.getYPos());
 		RoomTile pOneTile = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
 		RoomTile pTwoTile = (RoomTile)(board.getTile(othPlayer.getXPos(), othPlayer.getYPos()));
 		assertEquals(pOneTile.name().toString(), pTwoTile.name().toString());
 	}
+
+	@Test
+	public void testInvalidMoveIntoNullRoom(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = getPlayer();
+		try{
+			board.moveIntoRoom(player, null);
+			fail();
+		}
+		catch(CluedoError e){
+		}
+	}
+
+	@Test
+	public void testInvalidMoveNullIntoRoom(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = null;
+		try{
+			board.moveIntoRoom(player, getRoom());
+			fail();
+		}
+		catch(CluedoError e){
+		}
+	}
 	
-	//================//
-	// HELPER METHODS //
-	//================//
+	@Test
+	public void testValidStairs(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = getPlayer();
+		board.moveIntoRoom(player, getOtherRoom()); // getOtherRoom = kitchen = corner room
+		try{
+			board.useStairs(player);
+			RoomTile r = (RoomTile) board.getTile(player.getXPos(), player.getYPos());
+			assertTrue(r.isCornerRoom());
+		}
+		catch(CluedoError e){
+			fail();
+		}
+	}
+	
+	@Test
+	public void testInvalidStairs(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = getPlayer();
+		board.moveIntoRoom(player, getRoom()); // getRoom = ballroom = not a corner room
+		RoomTile r = (RoomTile) board.getTile(player.getXPos(), player.getYPos());
+		assertFalse(r.isCornerRoom());
+		try{
+			board.useStairs(player);
+			fail();
+		}
+		catch(CluedoError e){
+		}
+	}
+	
+	@Test
+	public void testValidPrintBoard(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		board.printBoard();
+		assertEquals("xxxxxxxxx1xxxxx2xxxxxxxxx\n" + 
+					 "KKKKKSx   BBBBB   xCCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  nCCCCC\n" +
+					 "KKKKKK  eBBBBBBBw   CCCCO\n" +
+					 "xKKKnK  BBBBBBBBB       3\n" +
+					 "        BnBBBBnBB       x\n" +
+					 "x                  IIIIII\n" +
+					 "NNNNN              eIIIII\n" +
+					 "NNNNNNNN  xxxxxx   IIIIII\n" +
+					 "NNNNNNNN  xxxxxx   IIIIII\n" +
+					 "NNNNNNNw  xxxxxx   IIIInI\n" +
+					 "NNNNNNNN  xxxxxx        x\n" +
+					 "NNNNNNNN  xxxxxx   LLsLLx\n" +
+					 "NNNNNNnN  xxxxxx  LLLLLLL\n" +
+					 "x         xxxxxx  eLLLLLL\n" +
+					 "6                 LLLLLLL\n" +
+  					 "x        HHsssHH   LLLLLx\n" +
+  					 "COOOOOs  HHHHHHH        4\n" +
+  					 "OOOOOOO  HHHHHHw        x\n" +
+  					 "OOOOOOO  HHHHHHH  sSSSSSK\n" +
+  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
+  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
+  					 "OOOOOOx5xHHHHHHHx SSSSSSS\n", outContent.toString());
+	}
+	
+	@Test
+	public void testValidPrintBoard_1(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(0);
+		board.printBoard();
+		assertEquals("xxxxxxxxx1xxxxx2xxxxxxxxx\n" + 
+					 "KKKKKSx   BBBBB   xCCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  nCCCCC\n" +
+					 "KKKKKK  eBBBBBBBw   CCCCO\n" +
+					 "xKKKnK  BBBBBBBBB       3\n" +
+					 "        BnBBBBnBB       x\n" +
+					 "x                  IIIIII\n" +
+					 "NNNNN              eIIIII\n" +
+					 "NNNNNNNN  xxxxxx   IIIIII\n" +
+					 "NNNNNNNN  xxxxxx   IIIIII\n" +
+					 "NNNNNNNw  xxxxxx   IIIInI\n" +
+					 "NNNNNNNN  xxxxxx        x\n" +
+					 "NNNNNNNN  xxxxxx   LLsLLx\n" +
+					 "NNNNNNnN  xxxxxx  LLLLLLL\n" +
+					 "x         xxxxxx  eLLLLLL\n" +
+					 "6                 LLLLLLL\n" +
+					 "x        HHsssHH   LLLLLx\n" +
+					 "COOOOOs  HHHHHHH        4\n" +
+					 "OOOOOOO  HHHHHHw        x\n" +
+					 "OOOOOOO  HHHHHHH  sSSSSSK\n" +
+					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
+					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
+					 "OOOOOOx5xHHHHHHHx SSSSSSS\n", outContent.toString());
+		board.moveSouth(player);
+		outContent.reset();
+		board.printBoard();
+		assertEquals("xxxxxxxxx xxxxx2xxxxxxxxx\n" + 
+					 "KKKKKSx  1BBBBB   xCCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
+					 "KKKKKK  BBBBBBBBB  nCCCCC\n" +
+					 "KKKKKK  eBBBBBBBw   CCCCO\n" +
+					 "xKKKnK  BBBBBBBBB       3\n" +
+					 "        BnBBBBnBB       x\n" +
+					 "x                  IIIIII\n" +
+					 "NNNNN              eIIIII\n" +
+					 "NNNNNNNN  xxxxxx   IIIIII\n" +
+					 "NNNNNNNN  xxxxxx   IIIIII\n" +
+					 "NNNNNNNw  xxxxxx   IIIInI\n" +
+					 "NNNNNNNN  xxxxxx        x\n" +
+					 "NNNNNNNN  xxxxxx   LLsLLx\n" +
+					 "NNNNNNnN  xxxxxx  LLLLLLL\n" +
+					 "x         xxxxxx  eLLLLLL\n" +
+					 "6                 LLLLLLL\n" +
+  					 "x        HHsssHH   LLLLLx\n" +
+  					 "COOOOOs  HHHHHHH        4\n" +
+  					 "OOOOOOO  HHHHHHw        x\n" +
+  					 "OOOOOOO  HHHHHHH  sSSSSSK\n" +
+  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
+  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
+  					 "OOOOOOx5xHHHHHHHx SSSSSSS\n", outContent.toString());
+	}
+	
+	//====================================================================================//
+	//                           ACCUSATION + SUGGESTION TESTS                            //
+	//====================================================================================//
+	
+	@Test
+	public void testValidAccusation(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		Card[] solution= game.Solution();
+		assertTrue(client.checkAccusation(solution, game.players().get(0)));
+		assertTrue(game.activePlayers()); // players still active
+	}
+	
+	@Test
+	public void testInvalidAccusation(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		Card[] solution= game.Solution();
+		Card[] guess = solution.clone();
+		// change the room so the guess is wrong
+		List<Room> rooms = getAllRooms();
+		for(Room r: rooms){
+			if(!(r.name().equals(solution[1].toString()))){
+					guess[1] = r;
+					break;
+			}
+		}
+		assertFalse(client.checkAccusation(guess, game.players().get(0)));
+	}
+	
+	@Test
+	public void testEndGame(){
+		TextClient client = miniCluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		Card[] solution= game.Solution();
+		Card[] guess = solution.clone();
+		// change the room so the guess is wrong
+		List<Room> rooms = getAllRooms();
+		for(Room r: rooms){
+			if(!(r.name().equals(solution[1].toString()))){
+					guess[1] = r;
+					break;
+			}
+		}
+		assertFalse(client.checkAccusation(guess, game.players().get(0)));
+		assertFalse(game.activePlayers()); // All player have lost
+	}
+	
+	//====================================================================================//
+	//                                  HELPER METHODS                                    //
+	//====================================================================================//
+	
+	// from http://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
+	/**
+	 * Prints to a stream so output can be compared to strings.
+	 */
+	@Before
+	public void setUpStreams() {
+	    System.setOut(new PrintStream(outContent));
+	    System.setErr(new PrintStream(errContent));
+	}
+	@After
+	public void cleanUpStreams() {
+	    System.setOut(null);
+	    System.setErr(null);
+	}
 	
 	/**
 	 * Returns a solution with Colonel Mustard, Ballroom, Rope.
@@ -230,7 +459,7 @@ public class Tests {
 	 * @return
 	 */
 	private CharacterToken getPlayer(){
-		return new CharacterToken("test1", CluedoGame.Character.COLONEL_MUSTARD, true, 0);
+		return new CharacterToken("test1", CluedoGame.Character.COLONEL_MUSTARD, true, 1);
 	}
 	
 	/**
@@ -238,7 +467,7 @@ public class Tests {
 	 * @return
 	 */
 	private CharacterToken getOtherPlayer(){
-		return new CharacterToken("test2", CluedoGame.Character.MISS_SCARLETT, true, 0);
+		return new CharacterToken("test2", CluedoGame.Character.MISS_SCARLETT, true, 1);
 	}
 	
 	/**
@@ -254,21 +483,51 @@ public class Tests {
 	 * Returns a non-player character.
 	 */
 	private CharacterToken getNonPlayer(){
-		return new CharacterToken("test1", CluedoGame.Character.MRS_PEACOCK, false, 0);
+		return new CharacterToken("test1", CluedoGame.Character.MRS_PEACOCK, false, 1);
 	}
 	
 	/**
-	 * Returns a list of all character tokens.
+	 * Returns a list of all six players.
 	 * @return
 	 */
 	private List<CharacterToken> getAllCharacters(){
 		List<CharacterToken> characters = new ArrayList<CharacterToken>();
-		characters.add(new CharacterToken("test1", CluedoGame.Character.COLONEL_MUSTARD, true, 0));
-		characters.add(new CharacterToken("test2", CluedoGame.Character.MISS_SCARLETT, true, 0));
-		characters.add(new CharacterToken("test3", CluedoGame.Character.MRS_PEACOCK, true, 0));
-		characters.add(new CharacterToken("test4", CluedoGame.Character.MRS_WHITE, true, 0));
-		characters.add(new CharacterToken("test5", CluedoGame.Character.PROFESSOR_PLUM, true, 0));
-		characters.add(new CharacterToken("test6", CluedoGame.Character.THE_REVEREND_GREEN, true, 0));
+		characters.add(new CharacterToken("test1", CluedoGame.Character.COLONEL_MUSTARD, true, 1));
+		characters.add(new CharacterToken("test2", CluedoGame.Character.MISS_SCARLETT, true, 2));
+		characters.add(new CharacterToken("test3", CluedoGame.Character.MRS_PEACOCK, true, 3));
+		characters.add(new CharacterToken("test4", CluedoGame.Character.MRS_WHITE, true, 4));
+		characters.add(new CharacterToken("test5", CluedoGame.Character.PROFESSOR_PLUM, true, 5));
+		characters.add(new CharacterToken("test6", CluedoGame.Character.THE_REVEREND_GREEN, true, 6));
+		return characters;
+	}
+	
+	/**
+	 * Returns a list of four players.
+	 * @return
+	 */
+	private List<CharacterToken> getHalfCharacters(){
+		List<CharacterToken> characters = new ArrayList<CharacterToken>();
+		characters.add(new CharacterToken("test1", CluedoGame.Character.COLONEL_MUSTARD, true, 1));
+		characters.add(new CharacterToken("test2", CluedoGame.Character.MISS_SCARLETT, true, 2));
+		characters.add(new CharacterToken("test3", CluedoGame.Character.MRS_PEACOCK, true, 3));
+		characters.add(new CharacterToken("test4", CluedoGame.Character.MRS_WHITE, true, 4));
+		characters.add(new CharacterToken("test5", CluedoGame.Character.PROFESSOR_PLUM, false, 5));
+		characters.add(new CharacterToken("test6", CluedoGame.Character.THE_REVEREND_GREEN, false, 6));
+		return characters;
+	}
+	
+	/**
+	 * Returns a list of one player.
+	 * @return
+	 */
+	private List<CharacterToken> getOneCharacter(){
+		List<CharacterToken> characters = new ArrayList<CharacterToken>();
+		characters.add(new CharacterToken("test1", CluedoGame.Character.COLONEL_MUSTARD, true, 1));
+		characters.add(new CharacterToken("test2", CluedoGame.Character.MISS_SCARLETT, false, 2));
+		characters.add(new CharacterToken("test3", CluedoGame.Character.MRS_PEACOCK, false, 3));
+		characters.add(new CharacterToken("test4", CluedoGame.Character.MRS_WHITE, false, 4));
+		characters.add(new CharacterToken("test5", CluedoGame.Character.PROFESSOR_PLUM, false, 5));
+		characters.add(new CharacterToken("test6", CluedoGame.Character.THE_REVEREND_GREEN, false, 6));
 		return characters;
 	}
 	
@@ -298,7 +557,7 @@ public class Tests {
 	 * Returns a second test room.
 	 */
 	private Room getOtherRoom(){
-		return CluedoGame.Room.BILLIARD_ROOM;
+		return CluedoGame.Room.KITCHEN;
 	}
 	
 	/**
@@ -364,11 +623,63 @@ public class Tests {
 	}
 	
 	/**
-	 * Creates a game.
+	 * Creates a text client associated with a game and board.
+	 * @return
+	 */
+	private TextClient cluedoGame(){
+		TextClient client = new TextClient();
+		CluedoGame game = newGame();
+		client.setGame(game);
+		client.setBoard(game.board());
+		return client;
+	}
+	
+	/**
+	 * Creates a text client associated with a small game (4 players) and a board.
+	 * @return
+	 */
+	private TextClient smallCluedoGame(){
+		TextClient client = new TextClient();
+		CluedoGame game = newSmallGame();
+		client.setGame(game);
+		client.setBoard(game.board());
+		return client;
+	}
+	
+	/**
+	 * Creates a text client associated with a game with one player and a board.
+	 * @return
+	 */
+	private TextClient miniCluedoGame(){
+		TextClient client = new TextClient();
+		CluedoGame game = newMiniGame();
+		client.setGame(game);
+		client.setBoard(game.board());
+		return client;
+	}
+	
+	/**
+	 * Creates a game with 6 players.
 	 * @return
 	 */
 	private CluedoGame newGame(){
 		return new CluedoGame(6, getAllCharacters(), "gameBoard.txt");
+	}
+	
+	/**
+	 * Creates a game with 4 players.
+	 * @return
+	 */
+	private CluedoGame newSmallGame(){
+		return new CluedoGame(4, getHalfCharacters(), "gameBoard.txt");
+	}
+	
+	/**
+	 * Creates a game with 4 players.
+	 * @return
+	 */
+	private CluedoGame newMiniGame(){
+		return new CluedoGame(1, getOneCharacter(), "gameBoard.txt");
 	}
 	
 	/**
@@ -377,14 +688,6 @@ public class Tests {
 	 */
 	private Board newBoard(CluedoGame game){
 		return new Board(game, "gameBoard.txt");
-	}
-	
-	private TextClient cluedoGame(){
-		TextClient client = new TextClient();
-		CluedoGame game = newGame();
-		client.setGame(game);
-		client.setBoard(game.board());
-		return client;
 	}
 }
 
