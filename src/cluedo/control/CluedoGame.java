@@ -47,6 +47,7 @@ public class CluedoGame {
 		CluedoGame.gameBoard = new Board(this, boardFile);
 		CluedoGame.deck = getDeck();
 		dealCards();
+		placeWeapons();
 	}
 
 	/**
@@ -274,6 +275,19 @@ public class CluedoGame {
 		Card result = deck.get(new Random().nextInt(deck.size()));
 		deck.remove(result);
 		return result;
+	}
+
+	/**
+	 * Sets weapons in random rooms.
+	 */
+	private void placeWeapons(){
+		List<Room> hasWeapon = getRooms();
+		for(WeaponToken weapon: getWeapons()){
+			Room room = (Room) Room.getRandom();
+			while(!hasWeapon.contains(room))
+				room = (Room) Room.getRandom();
+			board().moveIntoRoom(weapon, room);
+		}
 	}
 
 	/**

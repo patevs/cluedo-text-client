@@ -2,14 +2,9 @@ package cluedo.tests;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.Point;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +15,11 @@ import cluedo.control.CluedoGame.Room;
 import cluedo.tokens.*;
 
 /**
- * Tests the Cluedo game
+ * Tests for the Cluedo Game.
  * @author Patrick Evans and Maria Legaspi
  *
  */
 public class Tests {
-
-	// from http://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
-	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	
 	//====================================================================================//
 	//                                  EQUIPMENT TESTS                                   //
@@ -199,7 +190,7 @@ public class Tests {
 	//====================================================================================//
 
 	@Test
-	public void testValidMove(){
+	public void testMove(){
 		TextClient client = cluedoGame();
 		CluedoGame game = client.game();
 		Board board = client.board();
@@ -279,98 +270,34 @@ public class Tests {
 	}
 	
 	@Test
-	public void testValidPrintBoard(){
-		TextClient client = cluedoGame();
-		CluedoGame game = client.game();
-		Board board = client.board();
-		board.printBoard();
-		assertEquals("xxxxxxxxx1xxxxx2xxxxxxxxx\n" + 
-					 "KKKKKSx   BBBBB   xCCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  nCCCCC\n" +
-					 "KKKKKK  eBBBBBBBw   CCCCO\n" +
-					 "xKKKnK  BBBBBBBBB       3\n" +
-					 "        BnBBBBnBB       x\n" +
-					 "x                  IIIIII\n" +
-					 "NNNNN              eIIIII\n" +
-					 "NNNNNNNN  xxxxxx   IIIIII\n" +
-					 "NNNNNNNN  xxxxxx   IIIIII\n" +
-					 "NNNNNNNw  xxxxxx   IIIInI\n" +
-					 "NNNNNNNN  xxxxxx        x\n" +
-					 "NNNNNNNN  xxxxxx   LLsLLx\n" +
-					 "NNNNNNnN  xxxxxx  LLLLLLL\n" +
-					 "x         xxxxxx  eLLLLLL\n" +
-					 "6                 LLLLLLL\n" +
-  					 "x        HHsssHH   LLLLLx\n" +
-  					 "COOOOOs  HHHHHHH        4\n" +
-  					 "OOOOOOO  HHHHHHw        x\n" +
-  					 "OOOOOOO  HHHHHHH  sSSSSSK\n" +
-  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
-  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
-  					 "OOOOOOx5xHHHHHHHx SSSSSSS\n", outContent.toString());
-	}
-	
-	@Test
-	public void testValidPrintBoard_1(){
+	public void testValidMove(){
 		TextClient client = cluedoGame();
 		CluedoGame game = client.game();
 		Board board = client.board();
 		CharacterToken player = game.players().get(0);
-		board.printBoard();
-		assertEquals("xxxxxxxxx1xxxxx2xxxxxxxxx\n" + 
-					 "KKKKKSx   BBBBB   xCCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  nCCCCC\n" +
-					 "KKKKKK  eBBBBBBBw   CCCCO\n" +
-					 "xKKKnK  BBBBBBBBB       3\n" +
-					 "        BnBBBBnBB       x\n" +
-					 "x                  IIIIII\n" +
-					 "NNNNN              eIIIII\n" +
-					 "NNNNNNNN  xxxxxx   IIIIII\n" +
-					 "NNNNNNNN  xxxxxx   IIIIII\n" +
-					 "NNNNNNNw  xxxxxx   IIIInI\n" +
-					 "NNNNNNNN  xxxxxx        x\n" +
-					 "NNNNNNNN  xxxxxx   LLsLLx\n" +
-					 "NNNNNNnN  xxxxxx  LLLLLLL\n" +
-					 "x         xxxxxx  eLLLLLL\n" +
-					 "6                 LLLLLLL\n" +
-					 "x        HHsssHH   LLLLLx\n" +
-					 "COOOOOs  HHHHHHH        4\n" +
-					 "OOOOOOO  HHHHHHw        x\n" +
-					 "OOOOOOO  HHHHHHH  sSSSSSK\n" +
-					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
-					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
-					 "OOOOOOx5xHHHHHHHx SSSSSSS\n", outContent.toString());
+		int originalY = player.getYPos();
 		board.moveSouth(player);
-		outContent.reset();
-		board.printBoard();
-		assertEquals("xxxxxxxxx xxxxx2xxxxxxxxx\n" + 
-					 "KKKKKSx  1BBBBB   xCCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  CCCCCC\n" +
-					 "KKKKKK  BBBBBBBBB  nCCCCC\n" +
-					 "KKKKKK  eBBBBBBBw   CCCCO\n" +
-					 "xKKKnK  BBBBBBBBB       3\n" +
-					 "        BnBBBBnBB       x\n" +
-					 "x                  IIIIII\n" +
-					 "NNNNN              eIIIII\n" +
-					 "NNNNNNNN  xxxxxx   IIIIII\n" +
-					 "NNNNNNNN  xxxxxx   IIIIII\n" +
-					 "NNNNNNNw  xxxxxx   IIIInI\n" +
-					 "NNNNNNNN  xxxxxx        x\n" +
-					 "NNNNNNNN  xxxxxx   LLsLLx\n" +
-					 "NNNNNNnN  xxxxxx  LLLLLLL\n" +
-					 "x         xxxxxx  eLLLLLL\n" +
-					 "6                 LLLLLLL\n" +
-  					 "x        HHsssHH   LLLLLx\n" +
-  					 "COOOOOs  HHHHHHH        4\n" +
-  					 "OOOOOOO  HHHHHHw        x\n" +
-  					 "OOOOOOO  HHHHHHH  sSSSSSK\n" +
-  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
-  					 "OOOOOOO  HHHHHHH  SSSSSSS\n" +
-  					 "OOOOOOx5xHHHHHHHx SSSSSSS\n", outContent.toString());
+		assertEquals(originalY+1, player.getYPos());
+	}
+	
+	@Test
+	public void testValidCanMove(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(0); 
+		int originalY = player.getYPos();
+		assertTrue(board.canMoveSouth(player)); // player can move into hall
+	}
+	
+	@Test
+	public void testInvalidCanMove(){
+		TextClient client = cluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		CharacterToken player = game.players().get(5); 
+		int originalY = player.getYPos();
+		assertFalse(board.canMoveSouth(player)); // player cannot go through a wall
 	}
 	
 	//====================================================================================//
@@ -427,21 +354,6 @@ public class Tests {
 	//====================================================================================//
 	//                                  HELPER METHODS                                    //
 	//====================================================================================//
-	
-	// from http://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
-	/**
-	 * Prints to a stream so output can be compared to strings.
-	 */
-	@Before
-	public void setUpStreams() {
-	    System.setOut(new PrintStream(outContent));
-	    System.setErr(new PrintStream(errContent));
-	}
-	@After
-	public void cleanUpStreams() {
-	    System.setOut(null);
-	    System.setErr(null);
-	}
 	
 	/**
 	 * Returns a solution with Colonel Mustard, Ballroom, Rope.
