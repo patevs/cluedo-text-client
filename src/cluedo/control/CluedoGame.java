@@ -283,12 +283,17 @@ public class CluedoGame {
 	 * Sets weapons in random rooms.
 	 */
 	private void placeWeapons(){
-		List<Room> hasWeapon = getRooms();
+		List<Room> hasWeapon = new ArrayList<Room>();
+		// places each weapon in a room
 		for(WeaponToken weapon: getWeapons()){
-			Room room = (Room) Room.getRandom();
-			while(!hasWeapon.contains(room))
-				room = (Room) Room.getRandom();
-			board().moveIntoRoom(weapon, room);
+			for(Room r: getRooms()){
+				// finds a room with no weapon in it
+				if(!hasWeapon.contains(r))
+					// moves the weapon into that room
+					board().moveIntoRoom(weapon, r);
+					hasWeapon.add(r);
+					break;
+			}
 		}
 	}
 

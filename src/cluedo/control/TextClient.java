@@ -52,13 +52,16 @@ public class TextClient {
 			try {
 				// read a line of input
 				String s = in.readLine();
-				
 				int i = Integer.parseInt(s);
 				if(i > max || i < min) return inputNumber(msg, min, max);
 				// return as an integer
 				return Integer.parseInt(s);
 			} catch (IOException e) {
-				System.out.println("Please enter a number!");
+				System.out.println("Invalid number. Require number between " + 
+						min + " and " + max);
+			} catch (NumberFormatException nError){
+				System.out.println("Invalid number. Require number between " + 
+						min + " and " + max);
 			}
 		}
 	}
@@ -186,6 +189,18 @@ public class TextClient {
 	}
 
 	/**
+	 * Clears console for next player.
+	 */
+	private static void readyNextPlayer(){
+		for(int i = 0; i < 100; i++)
+			System.out.println("\n");
+		System.out.println("\t\t\t+-+-+-+-+ +-+-+-+-+-+-+");
+		System.out.println("\t\t\t|N|E|X|T| |P|L|A|Y|E|R|");
+		System.out.println("\t\t\t+-+-+-+-+ +-+-+-+-+-+-+");
+		System.out.println("");
+	}
+
+	/**
 	 * Gets suspected murder elements from player for an accusation.
 	 * @param player
 	 * @param board
@@ -221,16 +236,19 @@ public class TextClient {
 			// if any of the cards is wrong, displays an appropriate message.
 			if(!(results[i].toString().equals(solution[i].toString()))){
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
-				System.out.println("|Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e|");
+				System.out.println("|Y|O|U| |L|O|S|E| |Y|O|U| |L|O|S|E| |Y|O|U| |L|O|S|E| |Y|O|U| |L|O|S|E|");
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
 				player.isPlayer(false);
+				System.out.println("The crime was committed by " + solution[0].toString() + 
+						" in the " + solution[1].toString() + " with the " + solution[2].toString());
+				System.out.println("\n");
 				return false;
 			}
 		}
 		// otherwise all cards were correct, displays an appropriate message and returns true.
-		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
-		System.out.println("|Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n|");
-		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
+		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
+		System.out.println("|Y|O|U| |W|I|N| |Y|O|U| |W|I|N| |Y|O|U| |W|I|N| |Y|O|U| |W|I|N|");
+		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
 		System.out.println("\n");
 		// Displays the correct answer.
 		System.out.println("The crime was committed by " + solution[0].toString() + 
@@ -279,8 +297,7 @@ public class TextClient {
 	private static boolean checkSuggestion(Card[] suggestion, CharacterToken player){
 		for (CharacterToken p : board.players()) {
 			// checks each card in the players' hands
-			if(p.equals(player))
-			if(p.isPlayer()){
+			if(p.isPlayer() && !p.equals(player)){
 				for(Card c : p.getHand()){
 					for(int i=0; i<suggestion.length; i++){
 						if(c.equals(suggestion[i])){
@@ -292,7 +309,7 @@ public class TextClient {
 				}
 			}
 		}
-		System.out.println("Your suggestion cannot be refuted");
+		System.out.println("Noone can refute your suggestion");
 		return false;
 	}
 	
@@ -392,6 +409,9 @@ public class TextClient {
 			case "Look at hand.":
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
+			case "Look at clues.":
+				System.out.println("Clues: " + game.unusedCards().toString());
+				break;
 			case "Use stairs.":
 				board.useStairs(player); // moves player to opposite corner room
 				player.setRemainingSteps(0); // player cannot move after using stairs
@@ -479,6 +499,7 @@ public class TextClient {
 		}
 		options.add("Make accusation.");
 		options.add("Look at hand.");
+		options.add("Look at clues."); // shows unused cards
 		options.add("View help");
 		options.add("End turn.");
 		return options;
@@ -528,6 +549,7 @@ public class TextClient {
 		System.out.println("- 's' means only a \"Move South\" can enter the room");
 		System.out.println("- 'w' means only a \"Move West\" can enter the room");
 		System.out.println("- 'e' means only a \"Move East\" can enter the room");
+		System.out.println();
 		System.out.println("Weapons are represented by symbols, where: ");
 		System.out.println("- '+' represents Candlestick");
 		System.out.println("- '-' represents Dagger");
@@ -577,11 +599,6 @@ public class TextClient {
 		
 		// get number of players in game
 		int nplayers = inputNumber("Enter number of players (3-6)", 3, 6);
-		// throw exception or exit?
-		while(nplayers < 3 || nplayers > 6){
-			System.out.println("Invalid number of players. Game requires 3-6 players.");
-			nplayers = inputNumber("Enter number of players (3-6)", 3, 6);
-		}
 		// get player information
 		ArrayList<CharacterToken> players = inputPlayers(nplayers);
 		// print player information
@@ -614,8 +631,11 @@ public class TextClient {
 		// loop until game ends
 		while(!gameWon){
 			for(CharacterToken player: game.players()){
-				if(!player.isPlayer()) // only give turns to players
+				// only give turns to players
+				if(!player.isPlayer())
 					continue;
+				// displays banner and clears console for next player
+				readyNextPlayer();
 				// roll the dice
 				int roll = die.nextInt(6) + 1;
 				player.setRemainingSteps(roll);
@@ -628,9 +648,9 @@ public class TextClient {
 				while(player.getRemainingSteps() >= 0 && !endTurn){
 					executeChoice(getPlayerChoice(player), player);
 				}
-				// reset for next player
-				endTurn = false;
+				// resets for next player
 				canUseStairs = true;
+				endTurn = false;
 				System.out.println();
 			}
 		}
