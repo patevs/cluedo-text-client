@@ -54,9 +54,7 @@ public class WeaponToken extends GameToken implements Card{
 		return true;
 	}
 	
-	/**
-	 * Returns the string representation of the weapon.
-	 */
+	@Override
 	public String toString(){
 		return name.toString();
 	}
