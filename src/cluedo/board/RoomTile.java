@@ -44,6 +44,10 @@ public class RoomTile extends Tile{
 		return false;
 	}
 	
+	/**
+	 * Returns the room opposite this one
+	 * @return
+	 */
 	public CluedoGame.Room oppositeRoomPos(){
 		if(!isCornerRoom())
 			return null;

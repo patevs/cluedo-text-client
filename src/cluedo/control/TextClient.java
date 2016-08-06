@@ -28,13 +28,15 @@ public class TextClient {
 	private static int uid = 0;
 	private static CluedoGame game;
 	private static Board board;
-	private static boolean endTurn = false; // ends the turn after making an accusation or false suggestion
-	private static boolean gameWon = false;
-	private static boolean canUseStairs = false; // makes sure player can only use stairs at start of turn
 	
-	public TextClient() {
-		
-	}
+	private static boolean endTurn = false; // ends the turn after making an accusation or false suggestion
+	private static boolean canUseStairs = false; // makes sure player can only use stairs at start of turn
+	private static boolean gameWon = false; // state of game
+	
+	/**
+	 * Creates a text client.
+	 */
+	public TextClient() {}
 	
 	/**
 	 * Get an integer from System.in
@@ -197,6 +199,7 @@ public class TextClient {
 		result[1] = (Card)getCrimeScene();
 		result[2] = getWeapon().token();
 
+		// Displays the player's accusation.
 		System.out.println("You accuse " + result[0].toString() + " of committing the crime in the " + result[1].toString() +
 				" with the " + result[2].toString());
 		System.out.println("\n");
@@ -215,6 +218,7 @@ public class TextClient {
 
 		// checks each card by name
 		for(int i = 0; i < 3; i++){
+			// if any of the cards is wrong, displays an appropriate message.
 			if(!(results[i].toString().equals(solution[i].toString()))){
 				System.out.println("+-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+ +-+-+-+ +-+-+-+-+");
 				System.out.println("|Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e| |Y|o|u| |L|o|s|e|");
@@ -222,10 +226,12 @@ public class TextClient {
 				return false;
 			}
 		}
+		// otherwise all cards were correct, displays an appropriate message and returns true.
 		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
 		System.out.println("|Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n| |Y|o|u| |W|i|n|");
 		System.out.println("+-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+ +-+-+-+");
 		System.out.println("\n");
+		// Displays the correct answer.
 		System.out.println("The crime was committed by " + solution[0].toString() + 
 				" in the " + solution[1].toString() + " with the " + solution[2].toString());
 		System.out.println("\n");
@@ -236,25 +242,28 @@ public class TextClient {
 	 * Gets suspected murder elements from player for a suggestion.
 	 */
 	private static Card[] makeSuggestion(CharacterToken player){
-		// Crime scene
+		// crime scene
 		RoomTile crimeScene = (RoomTile)(board.getTile(player.getXPos(), player.getYPos()));
 		System.out.println("Suggested crime scene is: " + crimeScene.name());
 		
 		Card[] result = new Card[3];
 		
-		// Gets the suspect
+		// gets the suspect
 		CharacterToken suspect = getSuspect();
 		result[0] = suspect.getToken();
 		
-		// get the room
+		// get the room as a card
 		result[1] = (Card)CluedoGame.getRoom(crimeScene.name().toString());
 		
+		// gets the murder weapon
 		WeaponToken weapon = getWeapon();
 		result[2] = (Card)weapon;
 		
+		// moves the murder elements into the specified room
 		board.moveIntoRoom(suspect, crimeScene.name());
 		board.moveIntoRoom(weapon, crimeScene.name());
 				
+		// prints the player's suggestion
 		System.out.println("You suggest the crime was committed in the " + result[1] +
 				" by " + result[0].toString() + " with the " + result[2].toString());
 		return result;
@@ -266,8 +275,10 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	private static boolean checkSuggestion(Card[] suggestion){
+	private static boolean checkSuggestion(Card[] suggestion, CharacterToken player){
 		for (CharacterToken p : board.players()) {
+			// checks each card in the players' hands
+			if(p.equals(player))
 			if(p.isPlayer()){
 				for(Card c : p.getHand()){
 					for(int i=0; i<suggestion.length; i++){
@@ -350,7 +361,7 @@ public class TextClient {
 	}
 	
 	/**
-	 * Executes a given choice made by a player on their turn
+	 * Executes a given choice made by a player.
 	 * @param choice
 	 * @param player
 	 * @param board
@@ -360,7 +371,7 @@ public class TextClient {
 			case "Move North.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
 				board.moveNorth(player);
-				board.toString();
+				board.toString(); // displays the board
 				break;
 			case "Move East.":
 				player.setRemainingSteps(player.getRemainingSteps() - 1);
@@ -381,13 +392,13 @@ public class TextClient {
 				System.out.println("Your hand: " + player.getHand().toString());
 				break;
 			case "Use stairs.":
-				board.useStairs(player);
-				player.setRemainingSteps(0);
+				board.useStairs(player); // moves player to opposite corner room
+				player.setRemainingSteps(0); // player cannot move after using stairs
 				break;
 			case "Make suggestion.":
-				player.suggested(true);
-				if(checkSuggestion(makeSuggestion(player))) // if refuted, player's turn ends
+				if(checkSuggestion(makeSuggestion(player), player)) // if refuted, player's turn ends
 					endTurn = true;
+				player.suggested(true); // player cannot suggest again without leaving room
 				break;
 			case "Make accusation.":
 				if(!checkAccusation(makeAccusation(player))){
@@ -417,7 +428,7 @@ public class TextClient {
 	}
 
 	/**
-	 * Gets a players option choice on their turn
+	 * Displays a list of options for the player and returns the desired move to execute.
 	 * @param player
 	 * @param board
 	 */
@@ -435,13 +446,14 @@ public class TextClient {
 	}
 	
 	/**
-	 * Returns a list of options available to a player o their turn
+	 * Returns a list of options available to a player
 	 * @param player
 	 * @param board
 	 * @return list of options
 	 */
 	private static List<String> playerOptions(CharacterToken player){
 		List<String> options = new ArrayList<String>();
+		// checks which directions the player can move
 		if(player.getRemainingSteps() > 0){
 			if(board.canMoveNorth(player)){
 				options.add("Move North.");
@@ -457,8 +469,10 @@ public class TextClient {
 			}
 		}
 		if(board.inRoom(player)){
-			if(board.inCornerRoom(player) && canUseStairs)
+			// if the player begins the turn in a corner room
+			if(board.inCornerRoom(player) && canUseStairs) 
 				options.add("Use stairs.");
+			// if the player hasn't already made a suggestion in this room (without leaving)
 			if(!player.hasSuggested()){
 				options.add("Make suggestion.");
 			}
@@ -486,7 +500,7 @@ public class TextClient {
 		else{
 			System.out.println("\t\t\tThe crime goes unsolved");
 		}
-		gameWon = true;
+		gameWon = true; // to end the game
 	}
 	
 	/**
@@ -605,19 +619,18 @@ public class TextClient {
 				int roll = die.nextInt(6) + 1;
 				player.setRemainingSteps(roll);
 				board.toString(); // print the board
-				System.out.println("\n");
+				System.out.println();
 				// print players roll
 				System.out.print("(player " + player.getUid() + ": " + player.getToken() + ") rolls a " + roll);
 				player.suggested(false); // resets players suggestion field
+				// executes player's move
 				while(player.getRemainingSteps() >= 0 && !endTurn){
 					executeChoice(getPlayerChoice(player), player);
 				}
-				endTurn = false; // reset for next player
+				// reset for next player
+				endTurn = false;
 				canUseStairs = true;
-				System.out.println("\n");
-				System.out.println("\n");
-				System.out.println("\n");
-				System.out.println("\n");
+				System.out.println();
 			}
 		}
 	}

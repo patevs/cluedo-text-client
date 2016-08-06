@@ -39,9 +39,7 @@ public class CharacterToken extends GameToken{
 		this.uid = uid;
 	}
 
-	/**
-	 * Returns the name of the character.
-	 */
+	@Override
 	public String getName(){
 		return name.toString();
 	}
@@ -125,10 +123,33 @@ public class CharacterToken extends GameToken{
 	public int getRemainingSteps(){
 		return this.stepsRemaining;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((token == null) ? 0 : token.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
 
-	/**
-	 * Returns a string representation of this character.
-	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CharacterToken other = (CharacterToken)obj;
+		if (token != other.getToken())
+			return false;
+		if (name != other.getName())
+			return false;
+		return true;
+	}
+	
+	@Override
 	public String toString(){
 		return name.toString();
 	}

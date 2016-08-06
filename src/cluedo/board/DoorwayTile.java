@@ -3,6 +3,7 @@ package cluedo.board;
 /**
  * A doorway tile that allows the player to cross from the hallway to a room
  * or from a room to the hallway.
+ * @author Patrick Evans and Maria Legaspi
  */
 public class DoorwayTile extends Tile{
 	

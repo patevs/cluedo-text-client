@@ -52,5 +52,9 @@ public abstract class GameToken {
 	@Override
 	public abstract String toString();
 	
+	/**
+	 * Returns a character to represent this game token on the board.
+	 * @return
+	 */
 	public abstract char getSymbol();
 }

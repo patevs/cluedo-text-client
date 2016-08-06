@@ -31,7 +31,12 @@ public class CluedoGame {
 	
 	private static Board gameBoard; // the game board
 
-
+	/**
+	 * Creates a new cluedo game and deals cards to the appropriate players.
+	 * @param nPlayers
+	 * @param players
+	 * @param boardFile
+	 */
 	public CluedoGame(int nPlayers, List<CharacterToken> players, String boardFile) {
 		this.numberOfPlayers = nPlayers;
 		this.activePlayers = players;
@@ -142,6 +147,10 @@ public class CluedoGame {
 		return false;
 	}
 	
+	/**
+	 * Returns a list of all characters.
+	 * @return
+	 */
 	private static List<Character> getCharacters() {
 		List<Character> characters = new ArrayList<Character>();
 		// iterate over each weapon and add each one to the list
@@ -278,6 +287,10 @@ public class CluedoGame {
 		MRS_PEACOCK,
 		PROFESSOR_PLUM;
 
+		/**
+		 * Returns a random card.
+		 * @return
+		 */
 		public static Card getRandom() {
 			return values()[(int) (Math.random() * values().length)];
 		}
@@ -299,6 +312,10 @@ public class CluedoGame {
 		ROPE,
 		SPANNER;
 
+		/**
+		 * Returns a random weapon.
+		 * @return
+		 */
 		public static Card getRandom() {
 			return values()[(int) (Math.random() * values().length)];
 		}
@@ -323,6 +340,10 @@ public class CluedoGame {
 		LOUNGE,
 		DINING_ROOM;
 
+		/**
+		 * Returns a random room.
+		 * @return
+		 */
 		public static Card getRandom() {
 			return values()[(int) (Math.random() * values().length)];
 		}

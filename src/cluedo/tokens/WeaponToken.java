@@ -31,6 +31,28 @@ public class WeaponToken extends GameToken implements Card{
 	public Weapon token(){
 		return name;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WeaponToken other = (WeaponToken)obj;
+		if (name != other.token())
+			return false;
+		return true;
+	}
 	
 	/**
 	 * Returns the string representation of the weapon.

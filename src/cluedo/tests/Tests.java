@@ -94,6 +94,13 @@ public class Tests {
 	}
 	
 	@Test
+	public void testValidCharacterTokenEquals() {
+		CharacterToken character = getPlayer();
+		CharacterToken other = getPlayer();
+		assertTrue(character.equals(other));
+	}
+	
+	@Test
 	public void testInvalidCharacterTokenEquals() {
 		CharacterToken character = getPlayer();
 		CharacterToken other = getOtherPlayer();

@@ -29,6 +29,11 @@ public class Board {
 	
 	private Tile[][] board; // the board is a 2D array of tiles
 	
+	/**
+	 * Creates the board by reading a given file.
+	 * @param game
+	 * @param boardFile
+	 */
 	public Board(CluedoGame game, String boardFile) {
 		this.numPlayers = game.numPlayers();
 		this.activePlayers = game.players();
@@ -127,6 +132,7 @@ public class Board {
 		int ypos = token.getYPos();
 		Tile t = board[ypos-1][xpos];
 		char symbol = t.getSymbol();
+		// cannot move if next tile already contains a token
 		if(t.getToken()!=null){ 
 			return false;
 		}
@@ -157,6 +163,7 @@ public class Board {
 		int ypos = token.getYPos();
 		Tile t = board[ypos][xpos + 1];
 		char symbol = t.getSymbol();
+		// cannot move if next tile already contains a token
 		if(t.getToken()!=null){ 
 			return false;
 		}
@@ -187,6 +194,7 @@ public class Board {
 		int ypos = token.getYPos();
 		Tile t = board[ypos+1][xpos];
 		char symbol = t.getSymbol();
+		// cannot move if next tile already contains a token
 		if(t.getToken()!=null){ 
 			return false;
 		}
@@ -217,6 +225,7 @@ public class Board {
 		int ypos = token.getYPos();
 		Tile t = board[ypos][xpos - 1];
 		char symbol = t.getSymbol();
+		// cannot move if next tile already contains a token
 		if(t.getToken()!=null){ 
 			return false;
 		}
@@ -272,16 +281,16 @@ public class Board {
 	 * @param player
 	 */
 	public void useStairs(CharacterToken player){
+		// checks player is in a corner room
 		Tile tile = getTile(player.getXPos(), player.getYPos());
-		if(tile instanceof RoomTile){
-			RoomTile rTile = (RoomTile)tile;
-			if(rTile.isCornerRoom()){
-				CluedoGame.Room opposite = rTile.oppositeRoomPos();
-				System.out.println("Corner room: " + rTile.name());
-				System.out.println("Opposite room: " + opposite);
-				moveIntoRoom(player, opposite);
-			}
-		}
+		if(!(tile instanceof RoomTile))
+			throw new CluedoError("No stairs in this area: " + tile.toString());
+		if(!(((RoomTile)tile).isCornerRoom()))
+			throw new CluedoError("No stairs in this area: " + tile.toString());
+		RoomTile rTile = (RoomTile)tile;
+		// finds the opposite room and moves player to that room
+		CluedoGame.Room opposite = rTile.oppositeRoomPos();
+		moveIntoRoom(player, opposite);
 	}
 	
 	/**
@@ -290,11 +299,13 @@ public class Board {
 	 * @param player
 	 */
 	public void move(Point newPos, GameToken player){
-		board[player.getYPos()][player.getXPos()].setToken(null);	// set original pos to null
+		// set original pos to null
+		board[player.getYPos()][player.getXPos()].setToken(null);	
 		// change player position
 		player.setXPos(newPos.x);
 		player.setYPos(newPos.y);
-		board[newPos.y][newPos.x].setToken(player);	// set player in new position on board
+		// set player in new position on board
+		board[newPos.y][newPos.x].setToken(player);	
 	}
 	
 	/**
@@ -306,33 +317,39 @@ public class Board {
 		move(new Point(newPos.getX(), newPos.getY()), player);
 	}
 	
+	/**
+	 * Returns the tile at the specified position
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public Tile getTile(int x, int y){
 		return board[y][x];
 	}
 	
 	public void moveIntoRoom(GameToken token, Room r) {
-		//char symbol = getRoomSymbol(r);
+		// finds a tile in the given room
 		for(int i=0; i<board[0].length; i++){
 			for(int j=0; j<board.length; j++){
 				Tile t = board[i][j];
-				//if(t.getSymbol() == symbol && t.getToken() == null){
 				if(t instanceof RoomTile){
 					RoomTile rTile = (RoomTile)t;
+					// if this tile matches the room we're looking for
 					if(rTile.name() == r && t.getToken() == null){
+						// move the token into this tile
 						move(new Point(j, i), token);
-//						// remove from original tile
-//						// set token's new position
-//						token.setXPos(j);
-//						token.setYPos(i);
-//						// add token to new position
-//						t.setToken(token);
-						return; // moved character into room
+						return; // done
 					}
 				}		
 			}
 		}
 	}
 
+	/**
+	 * Returns the symbol associated with a given room.
+	 * @param r
+	 * @return
+	 */
 	public char getRoomSymbol(Room r) {
 		switch(r.toString()){
 			case "KITCHEN" :
@@ -359,7 +376,7 @@ public class Board {
 	}
 	
 	/**
-	 * Return the tile that corresponds to a specific character
+	 * Return a new tile corresponding to a specified character.
 	 * @param c tile character
 	 * @param p position on board
 	 * @return tile
@@ -412,15 +429,20 @@ public class Board {
 			}
 			System.out.print("\n");
 		}
-		System.out.println("\n");
-		System.out.println("\n");
+		System.out.println();
+		System.out.println();
 	}
 	
+	@Override
 	public String toString(){
 		this.printBoard();
 		return " ";
 	}
 
+	/**
+	 * Returns a list of all character tokens.
+	 * @return
+	 */
 	public List<CharacterToken> players() {
 		return activePlayers;
 	}
