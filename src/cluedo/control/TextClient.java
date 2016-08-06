@@ -39,6 +39,14 @@ public class TextClient {
 	public TextClient() {}
 	
 	/**
+	 * Returns true if game is finished.
+	 * @return
+	 */
+	public boolean gameStatus(){
+		return gameWon;
+	}
+	
+	/**
 	 * Get an integer from System.in
 	 * @param max 
 	 * @param min 
@@ -242,6 +250,10 @@ public class TextClient {
 				System.out.println("The crime was committed by " + solution[0].toString() + 
 						" in the " + solution[1].toString() + " with the " + solution[2].toString());
 				System.out.println("\n");
+				// displays game end message if all players have lost
+				if(!game.activePlayers()){
+					viewGameEnd(player);
+				}
 				return false;
 			}
 		}
@@ -254,6 +266,9 @@ public class TextClient {
 		System.out.println("The crime was committed by " + solution[0].toString() + 
 				" in the " + solution[1].toString() + " with the " + solution[2].toString());
 		System.out.println("\n");
+		
+		gameWon = true;
+		viewGameEnd(player);
 		return true;
 	}
 	
@@ -422,16 +437,6 @@ public class TextClient {
 				player.suggested(true); // player cannot suggest again without leaving room
 				break;
 			case "Make accusation.":
-				if(!checkAccusation(makeAccusation(player), player)){
-					// displays game end message if all players have lost
-					if(!game.activePlayers()){
-						viewGameEnd(player);
-					}
-				}else{
-					// displays game end message if player accused correctly
-					gameWon = true;
-					viewGameEnd(player);
-				}
 				endTurn = true;
 				break;
 			case "View help":

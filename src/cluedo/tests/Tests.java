@@ -60,7 +60,6 @@ public class Tests {
 		assertEquals(2, game.unusedCards().size());
 	}
 	
-	
 	@Test
 	public void testWeaponsNotEmpty(){
 		CluedoGame game = newGame();
@@ -406,7 +405,7 @@ public class Tests {
 	}
 	
 	@Test
-	public void testEndGame(){
+	public void testLoseGame(){
 		TextClient client = miniCluedoGame();
 		CluedoGame game = client.game();
 		Board board = client.board();
@@ -422,6 +421,17 @@ public class Tests {
 		}
 		assertFalse(client.checkAccusation(guess, game.players().get(0)));
 		assertFalse(game.activePlayers()); // All player have lost
+	}
+	
+	@Test
+	public void testWinGame(){
+		TextClient client = miniCluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		Card[] solution= game.Solution();
+		Card[] guess = solution.clone();
+		assertTrue(client.checkAccusation(guess, game.players().get(0)));
+		assertTrue(client.gameStatus()); // All player have lost
 	}
 	
 	//====================================================================================//
