@@ -294,7 +294,7 @@ public class TextClient {
 	 * @param board
 	 * @return
 	 */
-	private static boolean checkSuggestion(Card[] suggestion, CharacterToken player){
+	public static boolean checkSuggestion(Card[] suggestion, CharacterToken player){
 		for (CharacterToken p : board.players()) {
 			// checks each card in the players' hands
 			if(p.isPlayer() && !p.equals(player)){

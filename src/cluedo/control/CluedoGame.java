@@ -239,7 +239,7 @@ public class CluedoGame {
 	 * Returns a list of all the cards in the game deck
 	 * @return list of all cards
 	 */
-	private List<Card> getDeck() {
+	public List<Card> getDeck() {
 		List<Card> deck = new ArrayList<Card>();
 		deck.addAll(Arrays.asList(Character.values()));
 		deck.addAll(Arrays.asList(Weapon.values()));

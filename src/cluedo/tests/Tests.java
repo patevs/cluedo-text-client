@@ -32,10 +32,24 @@ public class Tests {
 	}
 	
 	@Test
-	public void testDeckEmpty(){
+	public void testDeck(){
 		TextClient client = smallCluedoGame();
 		CluedoGame game = client.game();
 		Board board = client.board();
+		assertEquals(18, game.getDeck().size());
+		int sum = 0;
+		for(CharacterToken player: game.players()){
+			sum+=player.getHand().size();
+		}
+		assertEquals(18, sum + game.unusedCards().size());
+	}
+	
+	@Test
+	public void testDeckEmptyAfterDeal(){
+		TextClient client = smallCluedoGame();
+		CluedoGame game = client.game();
+		Board board = client.board();
+		assertEquals(18, game.getDeck().size()); // all cards
 		assertTrue(game.deck().size()==0); // all cards dealt to players
 		for(CharacterToken player: game.players()){
 			if(player.isPlayer())

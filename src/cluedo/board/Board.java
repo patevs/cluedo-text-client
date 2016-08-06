@@ -340,19 +340,6 @@ public class Board {
 		board[newPos.y][newPos.x].setToken(player);	
 	}
 	
-//	Unused method	
-//	/**
-//	 * Moves player to a given position on the board.
-//	 * @param newPos
-//	 * @param player
-//	 */
-//	public void move(Position newPos, GameToken player){
-//		if(newPos == null || newPos.getX() < 0 || newPos.getX() > 24 ||
-//				newPos.getY() < 0 || newPos.getY() > 24 || player==null)
-//			return;
-//		move(new Point(newPos.getX(), newPos.getY()), player);
-//	}
-	
 	/**
 	 * Returns the tile at the specified position
 	 * @param x
@@ -471,7 +458,9 @@ public class Board {
 		}
 	}
 	
-	@Override
+	/**
+	 * Prints the board and returns an empty string.
+	 */
 	public String toString(){
 		this.printBoard();
 		return " ";
