@@ -578,8 +578,9 @@ public class TextClient {
 		// get number of players in game
 		int nplayers = inputNumber("Enter number of players (3-6)", 3, 6);
 		// throw exception or exit?
-		if(nplayers < 3 || nplayers > 6){
-			throw new CluedoError("Invalid number of players: " + nplayers);
+		while(nplayers < 3 || nplayers > 6){
+			System.out.println("Invalid number of players. Game requires 3-6 players.");
+			nplayers = inputNumber("Enter number of players (3-6)", 3, 6);
 		}
 		// get player information
 		ArrayList<CharacterToken> players = inputPlayers(nplayers);
